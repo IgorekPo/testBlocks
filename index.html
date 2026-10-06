@@ -10,102 +10,104 @@
   <div class="scroll-hint">SCROLL <span>↓</span></div>
 
   <main class="page">
-    <section class="paper paper--dark paper--first paper--next-1" data-paper>
+    <section class="paper paper--dark paper--edge-1 paper--first" data-paper>
       <div class="paper__stage"></div>
       <div class="paper__sheet">
+        <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
         <div class="paper__base">
           <div class="paper__grain"></div>
           <div class="paper__content">
             <span class="paper__label">01 · первый блок</span>
             <h1>Разворачивание слева направо</h1>
-            <p>Следующий лист появляется слева и постепенно разворачивается вправо. Когда он полностью открыт, свёрток уходит за правый край экрана.</p>
+            <p>У каждой секции теперь есть рваный край сверху и снизу. Нижний край подгоняется зеркально к верхнему краю следующей секции.</p>
           </div>
         </div>
-        <div class="paper__tear-bottom" aria-hidden="true"></div>
+        <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
       </div>
       <div class="paper__roll" aria-hidden="true"></div>
     </section>
 
-    <section class="paper paper--cream paper--top-1 paper--next-2" data-paper>
+    <section class="paper paper--cream paper--edge-2" data-paper>
       <div class="paper__stage"></div>
       <div class="paper__sheet">
-        <div class="paper__tear" aria-hidden="true"></div>
+        <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
         <div class="paper__base">
           <div class="paper__grain"></div>
           <div class="paper__content">
             <span class="paper__label">02 · светлый папір</span>
-            <h2>Аркуш йде зліва → направо</h2>
-            <p>Если у бежевого края есть выпуклость вверх, у зелёного снизу в этом месте идёт зеркальная выемка — и наоборот.</p>
+            <h2>Стык попадает край в край</h2>
+            <p>Если у бежевого листа край выпирает вверх, у зелёного в этом месте край уходит внутрь. И наоборот — соседние секции зеркально входят друг в друга.</p>
           </div>
         </div>
-        <div class="paper__tear-bottom" aria-hidden="true"></div>
+        <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
       </div>
       <div class="paper__roll" aria-hidden="true"></div>
     </section>
 
-    <section class="paper paper--dark paper--top-2 paper--next-3" data-paper>
+    <section class="paper paper--dark paper--edge-3" data-paper>
       <div class="paper__stage"></div>
       <div class="paper__sheet">
-        <div class="paper__tear" aria-hidden="true"></div>
+        <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
         <div class="paper__base">
           <div class="paper__grain"></div>
           <div class="paper__content">
             <span class="paper__label">03 · темная бумага</span>
-            <h2>Нижний край зеркалит верхний край следующего блока</h2>
-            <p>Рваная волна снизу у текущей секции строится по той же маске, что и сверху у следующей секции, только зеркально.</p>
+            <h2>Сверху и снизу одна логика</h2>
+            <p>У каждой секции сверху идёт paper__tear, а снизу — такой же рваный край, но зеркально перевёрнутый относительно следующего стыка.</p>
           </div>
         </div>
-        <div class="paper__tear-bottom" aria-hidden="true"></div>
+        <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
       </div>
       <div class="paper__roll" aria-hidden="true"></div>
     </section>
 
-    <section class="paper paper--cream paper--top-3 paper--next-4" data-paper>
+    <section class="paper paper--cream paper--edge-4" data-paper>
       <div class="paper__stage"></div>
       <div class="paper__sheet">
-        <div class="paper__tear" aria-hidden="true"></div>
+        <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
         <div class="paper__base">
           <div class="paper__grain"></div>
           <div class="paper__content">
             <span class="paper__label">04 · другой разрыв</span>
-            <h2>Зеркальная стыковка двух листов</h2>
-            <p>Так стык собирается как пазл: волны не случайные, а зеркальные по отношению друг к другу.</p>
+            <h2>Две рваные стороны у блока</h2>
+            <p>Каждый блок теперь рваный с двух сторон: сверху и снизу. Между секциями не должен просвечивать фон.</p>
           </div>
         </div>
-        <div class="paper__tear-bottom" aria-hidden="true"></div>
+        <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
       </div>
       <div class="paper__roll" aria-hidden="true"></div>
     </section>
 
-    <section class="paper paper--dark paper--top-4 paper--next-5" data-paper>
+    <section class="paper paper--dark paper--edge-5" data-paper>
       <div class="paper__stage"></div>
       <div class="paper__sheet">
-        <div class="paper__tear" aria-hidden="true"></div>
+        <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
         <div class="paper__base">
           <div class="paper__grain"></div>
           <div class="paper__content">
             <span class="paper__label">05 · ещё один стык</span>
-            <h2>Зелёный край повторяет волну бежевого, но наоборот</h2>
-            <p>Нижний рваный край зелёного блока повторяет контур следующего бежевого блока, только в зеркальном виде.</p>
+            <h2>Края зеркальные</h2>
+            <p>Зелёный край повторяет бежевый зеркально. Если у нижней секции есть вогнутость, у верхней секции на этом месте выпуклость.</p>
           </div>
         </div>
-        <div class="paper__tear-bottom" aria-hidden="true"></div>
+        <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
       </div>
       <div class="paper__roll" aria-hidden="true"></div>
     </section>
 
-    <section class="paper paper--cream paper--top-5 paper--last" data-paper>
+    <section class="paper paper--cream paper--edge-6 paper--last" data-paper>
       <div class="paper__stage"></div>
       <div class="paper__sheet">
-        <div class="paper__tear" aria-hidden="true"></div>
+        <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
         <div class="paper__base">
           <div class="paper__grain"></div>
           <div class="paper__content">
             <span class="paper__label">06 · останній блок</span>
             <h2>Фінальний край рівний</h2>
-            <p>Под всеми листами используется фон со стейком, а между секциями края должны попадать друг в друга по зеркальным волнам.</p>
+            <p>Под всеми листами остаётся фон со стейком, а каждая секция имеет верхний и нижний рваный край по одной системе.</p>
           </div>
         </div>
+        <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
       </div>
       <div class="paper__roll" aria-hidden="true"></div>
     </section>

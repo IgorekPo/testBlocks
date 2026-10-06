@@ -40,7 +40,7 @@ function updatePapers() {
 
     const roll = paper.querySelector(".paper__roll");
     const rollWidth = roll ? roll.offsetWidth : 128;
-    const rollOverlap = rollWidth * 0.74;
+    const rollOverlap = rollWidth * 0.70;
     const rollX = shown * rect.width - rollOverlap;
 
     const entering =
