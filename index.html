@@ -1,118 +1,131 @@
 <!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Torn paper horizontal scroll demo</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="scroll-hint">SCROLL <span>↓</span></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Torn paper horizontal scroll demo</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="scroll-hint">SCROLL <span>↓</span></div>
 
-  <main class="page">
-    <section class="paper paper--dark paper--edge-1 paper--first" data-paper>
-      <div class="paper__stage"></div>
-      <div class="paper__sheet">
-        <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
-        <div class="paper__base">
-          <div class="paper__grain"></div>
-          <div class="paper__content">
-            <span class="paper__label">01 · первый блок</span>
-            <h1>Разворачивание слева направо</h1>
-            <p>У каждой секции теперь есть рваный край сверху и снизу. Нижний край подгоняется зеркально к верхнему краю следующей секции.</p>
+    <main class="page">
+      <section class="paper paper--dark paper--edge-1 paper--first" data-paper>
+        <div class="paper__stage"></div>
+        <div class="paper__sheet">
+          <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
+          <div class="paper__base">
+            <div class="paper__grain"></div>
+            <div class="paper__content">
+              <span class="paper__label">01 · ГОЛОВНА</span>
+              <h1>Преміальні маринади з Європи</h1>
+            </div>
+          </div>
+          <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
+        </div>
+        <div class="paper__roll" aria-hidden="true"></div>
+      </section>
+
+      <section class="paper paper--cream paper--edge-2" data-paper>
+        <div class="paper__stage"></div>
+        <div class="paper__sheet">
+          <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
+          <div class="paper__base">
+            <div class="paper__grain"></div>
+            <div class="paper__content">
+              <span class="paper__label">02 · НАША ІСТОРІЯ</span>
+              <h2>Історія компанії</h2>
+              <p>
+                Коротко про компанію, походження продукції, натуральні
+                інгредієнти та підхід до якості.
+              </p>
+            </div>
+          </div>
+          <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
+        </div>
+        <div class="paper__roll" aria-hidden="true"></div>
+      </section>
+
+      <section class="paper paper--dark paper--edge-3" data-paper>
+        <div class="paper__stage"></div>
+        <div class="paper__sheet">
+          <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
+          <div class="paper__base">
+            <div class="paper__grain"></div>
+            <div class="paper__content">
+              <span class="paper__label">03 · КАТАЛОГ МАРИНАДІВ</span>
+              <h2>Сухі та рідкі маринади</h2>
+              <p>
+                Основний каталог продукції: окремі напрями для сухих сумішей і
+                готових рідких маринадів.
+              </p>
+            </div>
+          </div>
+          <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
+        </div>
+        <div class="paper__roll" aria-hidden="true"></div>
+      </section>
+
+      <section class="paper paper--cream paper--edge-4" data-paper>
+        <div class="paper__stage"></div>
+        <div class="paper__sheet">
+          <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
+          <div class="paper__base">
+            <div class="paper__grain"></div>
+            <div class="paper__content">
+              <span class="paper__label">04 · НАШІ ПЕРЕВАГИ</span>
+              <h2>Чому обирають EPOS</h2>
+              <p>
+                Натуральні інгредієнти, європейська якість, професійні рецептури
+                та рішення для дому й HoReCa.
+              </p>
+            </div>
+          </div>
+          <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
+        </div>
+        <div class="paper__roll" aria-hidden="true"></div>
+      </section>
+
+      <section class="paper paper--dark paper--edge-5" data-paper>
+        <div class="paper__stage"></div>
+        <div class="paper__sheet">
+          <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
+          <div class="paper__base">
+            <div class="paper__grain"></div>
+            <div class="paper__content">
+              <span class="paper__label">05 · РЕЦЕПТИ ТА НАТХНЕННЯ</span>
+              <h2>Створюйте особливі страви</h2>
+              <p>
+                Добірка рецептів, ідей та способів використання маринадів для
+                м’яса, риби, овочів і гриля.
+              </p>
+            </div>
+          </div>
+          <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
+        </div>
+        <div class="paper__roll" aria-hidden="true"></div>
+      </section>
+
+      <section class="paper paper--cream paper--edge-6 paper--last" data-paper>
+        <div class="paper__stage"></div>
+        <div class="paper__sheet">
+          <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
+          <div class="paper__base">
+            <div class="paper__grain"></div>
+            <div class="paper__content">
+              <span class="paper__label">06 · ЧАСТІ ЗАПИТАННЯ ТА КОНТАКТИ</span>
+              <h2>Відповіді та зв’язок</h2>
+              <p>
+                Відповіді на популярні запитання про продукцію, доставку та
+                зберігання, а також контакти компанії.
+              </p>
+            </div>
           </div>
         </div>
-        <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
-      </div>
-      <div class="paper__roll" aria-hidden="true"></div>
-    </section>
+        <div class="paper__roll" aria-hidden="true"></div>
+      </section>
+    </main>
 
-    <section class="paper paper--cream paper--edge-2" data-paper>
-      <div class="paper__stage"></div>
-      <div class="paper__sheet">
-        <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
-        <div class="paper__base">
-          <div class="paper__grain"></div>
-          <div class="paper__content">
-            <span class="paper__label">02 · светлый папір</span>
-            <h2>Стык попадает край в край</h2>
-            <p>Если у бежевого листа край выпирает вверх, у зелёного в этом месте край уходит внутрь. И наоборот — соседние секции зеркально входят друг в друга.</p>
-          </div>
-        </div>
-        <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
-      </div>
-      <div class="paper__roll" aria-hidden="true"></div>
-    </section>
-
-    <section class="paper paper--dark paper--edge-3" data-paper>
-      <div class="paper__stage"></div>
-      <div class="paper__sheet">
-        <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
-        <div class="paper__base">
-          <div class="paper__grain"></div>
-          <div class="paper__content">
-            <span class="paper__label">03 · темная бумага</span>
-            <h2>Сверху и снизу одна логика</h2>
-            <p>У каждой секции сверху идёт paper__tear, а снизу — такой же рваный край, но зеркально перевёрнутый относительно следующего стыка.</p>
-          </div>
-        </div>
-        <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
-      </div>
-      <div class="paper__roll" aria-hidden="true"></div>
-    </section>
-
-    <section class="paper paper--cream paper--edge-4" data-paper>
-      <div class="paper__stage"></div>
-      <div class="paper__sheet">
-        <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
-        <div class="paper__base">
-          <div class="paper__grain"></div>
-          <div class="paper__content">
-            <span class="paper__label">04 · другой разрыв</span>
-            <h2>Две рваные стороны у блока</h2>
-            <p>Каждый блок теперь рваный с двух сторон: сверху и снизу. Между секциями не должен просвечивать фон.</p>
-          </div>
-        </div>
-        <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
-      </div>
-      <div class="paper__roll" aria-hidden="true"></div>
-    </section>
-
-    <section class="paper paper--dark paper--edge-5" data-paper>
-      <div class="paper__stage"></div>
-      <div class="paper__sheet">
-        <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
-        <div class="paper__base">
-          <div class="paper__grain"></div>
-          <div class="paper__content">
-            <span class="paper__label">05 · ещё один стык</span>
-            <h2>Края зеркальные</h2>
-            <p>Зелёный край повторяет бежевый зеркально. Если у нижней секции есть вогнутость, у верхней секции на этом месте выпуклость.</p>
-          </div>
-        </div>
-        <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
-      </div>
-      <div class="paper__roll" aria-hidden="true"></div>
-    </section>
-
-    <section class="paper paper--cream paper--edge-6 paper--last" data-paper>
-      <div class="paper__stage"></div>
-      <div class="paper__sheet">
-        <div class="paper__tear paper__tear--top" aria-hidden="true"></div>
-        <div class="paper__base">
-          <div class="paper__grain"></div>
-          <div class="paper__content">
-            <span class="paper__label">06 · останній блок</span>
-            <h2>Фінальний край рівний</h2>
-            <p>Под всеми листами остаётся фон со стейком, а каждая секция имеет верхний и нижний рваный край по одной системе.</p>
-          </div>
-        </div>
-        <div class="paper__tear paper__tear--bottom" aria-hidden="true"></div>
-      </div>
-      <div class="paper__roll" aria-hidden="true"></div>
-    </section>
-  </main>
-
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
