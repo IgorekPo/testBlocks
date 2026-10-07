@@ -18,7 +18,7 @@ body {
   min-width: 320px;
   overflow-x: hidden;
   background:
-    linear-gradient(rgb(0 0 0 / .26), rgb(0 0 0 / .26)),
+    linear-gradient(rgb(0 0 0 / 0.26), rgb(0 0 0 / 0.26)),
     var(--debug-bg) center center / cover no-repeat fixed;
   color: #fff;
   font-family: Inter, Arial, sans-serif;
@@ -35,7 +35,11 @@ body {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(180deg, rgb(255 255 255 / .02), rgb(0 0 0 / .08));
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.02),
+    rgb(0 0 0 / 0.08)
+  );
 }
 
 .scroll-hint {
@@ -47,12 +51,12 @@ body {
   align-items: center;
   gap: 9px;
   padding: 9px 12px;
-  border: 1px solid rgb(255 255 255 / .18);
+  border: 1px solid rgb(255 255 255 / 0.18);
   border-radius: 999px;
-  background: rgb(0 0 0 / .24);
+  background: rgb(0 0 0 / 0.24);
   backdrop-filter: blur(10px);
   font-size: 11px;
-  letter-spacing: .18em;
+  letter-spacing: 0.18em;
   pointer-events: none;
 }
 
@@ -96,7 +100,7 @@ body {
   inset: 0;
   z-index: 0;
   background:
-    linear-gradient(rgb(0 0 0 / .26), rgb(0 0 0 / .26)),
+    linear-gradient(rgb(0 0 0 / 0.26), rgb(0 0 0 / 0.26)),
     var(--debug-bg) center center / cover no-repeat fixed;
 }
 
@@ -109,9 +113,8 @@ body {
   bottom: calc(var(--tear-h) * -0.08);
   overflow: visible;
   clip-path: inset(0 max(0px, calc((1 - var(--shown)) * 100% - 2px)) 0 0);
-  filter:
-    brightness(calc(.90 + var(--shown) * .10))
-    saturate(calc(.94 + var(--shown) * .06));
+  filter: brightness(calc(0.9 + var(--shown) * 0.1))
+    saturate(calc(0.94 + var(--shown) * 0.06));
   will-change: clip-path, filter;
 }
 
@@ -133,11 +136,23 @@ body {
   padding: calc(72px + var(--tear-h)) 24px calc(92px + var(--tear-h));
   color: var(--fg);
   background:
-    radial-gradient(circle at 18% 22%, rgb(255 255 255 / .045) 0 1.1px, transparent 1.8px),
-    radial-gradient(circle at 76% 65%, rgb(0 0 0 / .04) 0 1px, transparent 1.7px),
-    linear-gradient(180deg, rgb(255 255 255 / .025), rgb(0 0 0 / .03)),
+    radial-gradient(
+      circle at 18% 22%,
+      rgb(255 255 255 / 0.045) 0 1.1px,
+      transparent 1.8px
+    ),
+    radial-gradient(
+      circle at 76% 65%,
+      rgb(0 0 0 / 0.04) 0 1px,
+      transparent 1.7px
+    ),
+    linear-gradient(180deg, rgb(255 255 255 / 0.025), rgb(0 0 0 / 0.03)),
     var(--bg);
-  background-size: 21px 21px, 27px 27px, auto, auto;
+  background-size:
+    21px 21px,
+    27px 27px,
+    auto,
+    auto;
 }
 
 .paper--first .paper__base {
@@ -152,9 +167,17 @@ body {
   height: calc(var(--tear-h) + 52px);
   z-index: 4;
   background:
-    radial-gradient(circle at 14% 62%, rgb(0 0 0 / .05) 0 1px, transparent 1.7px),
-    radial-gradient(circle at 64% 50%, rgb(255 255 255 / .05) 0 1px, transparent 1.8px),
-    linear-gradient(180deg, rgb(255 255 255 / .03), rgb(0 0 0 / .03)),
+    radial-gradient(
+      circle at 14% 62%,
+      rgb(0 0 0 / 0.05) 0 1px,
+      transparent 1.7px
+    ),
+    radial-gradient(
+      circle at 64% 50%,
+      rgb(255 255 255 / 0.05) 0 1px,
+      transparent 1.8px
+    ),
+    linear-gradient(180deg, rgb(255 255 255 / 0.03), rgb(0 0 0 / 0.03)),
     var(--bg);
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
@@ -179,32 +202,63 @@ body {
 }
 
 .paper__tear::before {
-  opacity: .78;
+  opacity: 0.78;
   background:
-    radial-gradient(circle at 10% 58%, rgb(0 0 0 / .16) 0 1px, transparent 1.6px),
-    radial-gradient(circle at 28% 49%, rgb(255 255 255 / .10) 0 1px, transparent 1.6px),
-    radial-gradient(circle at 48% 57%, rgb(0 0 0 / .14) 0 1.2px, transparent 1.8px),
-    radial-gradient(circle at 70% 46%, rgb(255 255 255 / .10) 0 1px, transparent 1.6px),
-    radial-gradient(circle at 86% 54%, rgb(0 0 0 / .14) 0 1px, transparent 1.6px),
-    linear-gradient(180deg, rgb(255 255 255 / .14), transparent 18%),
-    linear-gradient(180deg, rgb(0 0 0 / .14), transparent 24%);
-  background-size: 130px 30px, 150px 28px, 120px 32px, 140px 30px, 120px 32px, 100% 100%, 100% 100%;
+    radial-gradient(
+      circle at 10% 58%,
+      rgb(0 0 0 / 0.16) 0 1px,
+      transparent 1.6px
+    ),
+    radial-gradient(
+      circle at 28% 49%,
+      rgb(255 255 255 / 0.1) 0 1px,
+      transparent 1.6px
+    ),
+    radial-gradient(
+      circle at 48% 57%,
+      rgb(0 0 0 / 0.14) 0 1.2px,
+      transparent 1.8px
+    ),
+    radial-gradient(
+      circle at 70% 46%,
+      rgb(255 255 255 / 0.1) 0 1px,
+      transparent 1.6px
+    ),
+    radial-gradient(
+      circle at 86% 54%,
+      rgb(0 0 0 / 0.14) 0 1px,
+      transparent 1.6px
+    ),
+    linear-gradient(180deg, rgb(255 255 255 / 0.14), transparent 18%),
+    linear-gradient(180deg, rgb(0 0 0 / 0.14), transparent 24%);
+  background-size:
+    130px 30px,
+    150px 28px,
+    120px 32px,
+    140px 30px,
+    120px 32px,
+    100% 100%,
+    100% 100%;
   background-repeat: repeat-x;
 }
 
 .paper__tear::after {
-  opacity: .55;
-  background: linear-gradient(180deg, transparent 0 62%, rgb(255 255 255 / .09) 72%, transparent 100%);
+  opacity: 0.55;
+  background: linear-gradient(
+    180deg,
+    transparent 0 62%,
+    rgb(255 255 255 / 0.09) 72%,
+    transparent 100%
+  );
 }
 
 .paper__tear--top {
   top: 0;
   -webkit-mask-image: var(--tear-top-mask);
   mask-image: var(--tear-top-mask);
-  filter:
-    drop-shadow(0 -2px 1px rgb(255 255 255 / .08))
-    drop-shadow(0 -8px 7px rgb(0 0 0 / .18))
-    drop-shadow(0 -18px 22px rgb(0 0 0 / .10));
+  filter: drop-shadow(0 -2px 1px rgb(255 255 255 / 0.08))
+    drop-shadow(0 -8px 7px rgb(0 0 0 / 0.18))
+    drop-shadow(0 -18px 22px rgb(0 0 0 / 0.1));
 }
 
 .paper__tear--top::before,
@@ -219,10 +273,9 @@ body {
   transform-origin: center;
   -webkit-mask-image: var(--tear-bottom-mask);
   mask-image: var(--tear-bottom-mask);
-  filter:
-    drop-shadow(0 -2px 1px rgb(255 255 255 / .08))
-    drop-shadow(0 -8px 7px rgb(0 0 0 / .16))
-    drop-shadow(0 -14px 16px rgb(0 0 0 / .08));
+  filter: drop-shadow(0 -2px 1px rgb(255 255 255 / 0.08))
+    drop-shadow(0 -8px 7px rgb(0 0 0 / 0.16))
+    drop-shadow(0 -14px 16px rgb(0 0 0 / 0.08));
 }
 
 .paper__tear--bottom::before,
@@ -235,11 +288,20 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: .17;
+  opacity: 0.17;
   mix-blend-mode: soft-light;
   background:
-    repeating-radial-gradient(ellipse at 40% 30%, rgb(255 255 255 / .18) 0 .6px, transparent .9px 6px),
-    repeating-linear-gradient(6deg, transparent 0 17px, rgb(0 0 0 / .05) 18px, transparent 19px 32px);
+    repeating-radial-gradient(
+      ellipse at 40% 30%,
+      rgb(255 255 255 / 0.18) 0 0.6px,
+      transparent 0.9px 6px
+    ),
+    repeating-linear-gradient(
+      6deg,
+      transparent 0 17px,
+      rgb(0 0 0 / 0.05) 18px,
+      transparent 19px 32px
+    );
 }
 
 .paper__content {
@@ -247,10 +309,9 @@ body {
   z-index: 3;
   width: min(920px, 100%);
   text-align: center;
-  transform:
-    translateX(calc((1 - var(--shown)) * -28px))
-    scale(calc(.985 + var(--shown) * .015));
-  opacity: calc(.30 + var(--shown) * .70);
+  transform: translateX(calc((1 - var(--shown)) * -28px))
+    scale(calc(0.985 + var(--shown) * 0.015));
+  opacity: calc(0.3 + var(--shown) * 0.7);
   will-change: transform, opacity;
 }
 
@@ -260,9 +321,9 @@ body {
   gap: 10px;
   margin-bottom: 20px;
   font-size: 12px;
-  letter-spacing: .24em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  opacity: .66;
+  opacity: 0.66;
 }
 
 .paper__label::before {
@@ -278,8 +339,8 @@ body {
   margin: 0 auto 20px;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(45px, 7.5vw, 106px);
-  line-height: .92;
-  letter-spacing: -.055em;
+  line-height: 0.92;
+  letter-spacing: -0.055em;
 }
 
 .paper p {
@@ -287,7 +348,7 @@ body {
   margin: 0 auto;
   font-size: clamp(16px, 1.8vw, 22px);
   line-height: 1.58;
-  opacity: .78;
+  opacity: 0.78;
 }
 
 .paper__roll {
@@ -313,19 +374,19 @@ body {
   background:
     linear-gradient(
       90deg,
-      rgb(0 0 0 / .20) 0%,
-      rgb(255 255 255 / .08) 14%,
-      rgb(255 255 255 / .24) 34%,
-      rgb(255 255 255 / .08) 50%,
-      rgb(0 0 0 / .14) 72%,
-      rgb(0 0 0 / .25) 100%
+      rgb(0 0 0 / 0.2) 0%,
+      rgb(255 255 255 / 0.08) 14%,
+      rgb(255 255 255 / 0.24) 34%,
+      rgb(255 255 255 / 0.08) 50%,
+      rgb(0 0 0 / 0.14) 72%,
+      rgb(0 0 0 / 0.25) 100%
     ),
     var(--bg);
   box-shadow:
-    14px 0 28px rgb(0 0 0 / .18),
-    -18px 0 24px rgb(0 0 0 / .16),
-    inset 16px 0 20px rgb(255 255 255 / .07),
-    inset -18px 0 20px rgb(0 0 0 / .14);
+    14px 0 28px rgb(0 0 0 / 0.18),
+    -18px 0 24px rgb(0 0 0 / 0.16),
+    inset 16px 0 20px rgb(255 255 255 / 0.07),
+    inset -18px 0 20px rgb(0 0 0 / 0.14);
 }
 
 .paper__roll::after {
@@ -335,7 +396,7 @@ body {
   bottom: 1%;
   right: -28px;
   width: 44px;
-  background: linear-gradient(90deg, rgb(0 0 0 / .18), transparent);
+  background: linear-gradient(90deg, rgb(0 0 0 / 0.18), transparent);
   filter: blur(8px);
 }
 
@@ -424,11 +485,10 @@ body {
   }
 }
 
-
 /* Чтобы нижний рваный край оставался видимым у всех секций,
    следующий блок больше не перекрывает его полностью. */
 .paper:not(.paper--last) {
-  margin-bottom: calc(var(--tear-h) * 0.10);
+  margin-bottom: calc(var(--tear-h) * 0.1);
 }
 
 .paper__tear--bottom {
@@ -438,7 +498,6 @@ body {
 .paper__tear--top {
   z-index: 4;
 }
-
 
 /* =========================================================
    ОСТАННЯ СЕКЦІЯ
@@ -469,7 +528,6 @@ body {
   }
 }
 
-
 /* =========================================================
    V18 — MOBILE BACKGROUND STABILITY FIX ONLY
 
@@ -494,7 +552,7 @@ body {
     pointer-events: none;
 
     background:
-      linear-gradient(rgb(0 0 0 / .26), rgb(0 0 0 / .26)),
+      linear-gradient(rgb(0 0 0 / 0.26), rgb(0 0 0 / 0.26)),
       var(--debug-bg) center center / cover no-repeat;
 
     transform: translateZ(0);
@@ -512,5 +570,411 @@ body {
     body::after {
       height: 100vh;
     }
+  }
+}
+
+/* =========================================================
+   V21 — ФОН КАЖДОЙ СЕКЦИИ
+   Изменены ТОЛЬКО фоновые изображения секций.
+   Вся логика раскрытия/скролла/масок остаётся как в V20.
+   ========================================================= */
+
+.paper--edge-1 .paper__base {
+  background: url("assets/section-1-bg.webp") center center / cover no-repeat;
+}
+
+.paper--edge-2 .paper__base {
+  background: url("assets/section-2-bg.webp") center center / cover no-repeat;
+}
+
+.paper--edge-3 .paper__base {
+  background: url("assets/section-3-bg.webp") center center / cover no-repeat;
+}
+.paper--edge-3 .paper__content {
+  background: linear-gradient(to right, #fff 0%, #fff 60%, #000 60%, #000 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.paper--edge-4 .paper__base {
+  background: url("assets/section-4-bg.webp") center center / cover no-repeat;
+}
+.paper--edge-4 .paper__base {
+  color: #fff;
+}
+.paper--edge-5 .paper__base {
+  background: url("assets/section-5-bg.webp") center center / cover no-repeat;
+}
+.paper--edge-5 .paper__base {
+  color: #000;
+}
+.paper--edge-6 .paper__base {
+  background: url("assets/section-6-bg.webp") center center / cover no-repeat;
+}
+.paper--edge-6 .paper__base {
+  color: #fff;
+}
+/* =========================================================
+   V22 — БЕЗ CSS-МАСОК / БЕЗ ОТСТУПОВ МЕЖДУ СЕКЦИЯМИ
+
+   Рваные края уже находятся внутри самих фоновых изображений,
+   поэтому дополнительные paper__tear и SVG-маски больше не нужны.
+   ========================================================= */
+
+:root {
+  --tear-h: 0px;
+}
+
+.paper,
+.paper--first,
+.paper--last {
+  min-height: 100svh;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.paper__sheet,
+.paper--first .paper__sheet {
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.paper__base,
+.paper--first .paper__base,
+.paper--last .paper__base {
+  top: 0;
+  bottom: 0;
+  padding: clamp(64px, 7vw, 104px) 24px;
+}
+
+/* Все старые tear-слои полностью отключены. */
+.paper__tear,
+.paper__tear--top,
+.paper__tear--bottom {
+  display: none !important;
+}
+
+/* Между секциями нет технических полос/подложек. */
+.paper:not(.paper--first) .paper__sheet::before {
+  display: none !important;
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    --tear-h: 0px;
+  }
+
+  .paper,
+  .paper--first,
+  .paper--last {
+    min-height: 100svh;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .paper__sheet,
+  .paper--first .paper__sheet {
+    top: 0;
+    bottom: 0;
+  }
+
+  .paper__base,
+  .paper--first .paper__base,
+  .paper--last .paper__base {
+    top: 0;
+    bottom: 0;
+    padding: 64px 18px;
+  }
+}
+
+/* =========================================================
+   V23 — ФОНЫ СЕКЦИЙ ИЗ ПРИСЛАННЫХ ПРОЗРАЧНЫХ ИЗОБРАЖЕНИЙ
+
+   Используются именно присланные пользователем файлы.
+   Всё, что находится за рваными краями в PNG/WebP, остаётся прозрачным.
+   ========================================================= */
+
+/* Убираем бумажную подложку и лишний шум, чтобы остались только
+   сами присланные фоны секций с их прозрачностью. */
+.paper__base {
+  background-color: transparent !important;
+}
+
+.paper__grain {
+  display: none !important;
+}
+
+/* Фоны ставим строго по порядку изображений.
+   Для прозрачных рваных краёв используем полный размер блока,
+   чтобы изображение целиком присутствовало в секции. */
+.paper--edge-1 .paper__base {
+  background: url("assets/section-1-user-bg.webp") center center / 100% 100%
+    no-repeat !important;
+}
+
+.paper--edge-2 .paper__base {
+  background: url("assets/section-2-user-bg.png") center center / 100% 100%
+    no-repeat !important;
+}
+
+.paper--edge-3 .paper__base {
+  background: url("assets/section-3-user-bg.png") center center / 100% 100%
+    no-repeat !important;
+}
+
+.paper--edge-4 .paper__base {
+  background: url("assets/section-4-user-bg.png") center center / 100% 100%
+    no-repeat !important;
+}
+
+.paper--edge-5 .paper__base {
+  background: url("assets/section-5-user-bg.png") center center / 100% 100%
+    no-repeat !important;
+}
+
+.paper--edge-6 .paper__base {
+  background: url("assets/section-6-user-bg.png") center center / 100% 100%
+    no-repeat !important;
+}
+
+/* =========================================================
+   V24 — УБРАН ФОНОВЫЙ ЗАДНИЙ ПЛАН И СДВИНУТЫ СЕКЦИИ
+   1) Полностью убран фон-картинка за секциями.
+   2) Секции сдвинуты друг в друга, чтобы прозрачные рваные края
+      соединялись без щели.
+   ========================================================= */
+
+html,
+body {
+  background: #000 !important;
+}
+
+body {
+  background-image: none !important;
+}
+
+body::after,
+.page::before {
+  display: none !important;
+}
+
+.paper__stage {
+  background: none !important;
+}
+
+/* Важно: предыдущая секция лежит выше следующей,
+   чтобы сквозь прозрачный рваный низ было видно верх следующей секции. */
+.paper--edge-1 {
+  z-index: 60;
+}
+.paper--edge-2 {
+  z-index: 50;
+}
+.paper--edge-3 {
+  z-index: 40;
+}
+.paper--edge-4 {
+  z-index: 30;
+}
+.paper--edge-5 {
+  z-index: 20;
+}
+.paper--edge-6 {
+  z-index: 10;
+}
+
+/* Сдвигаем секции вверх на величину, достаточную для стыка рваных краёв. */
+.paper--edge-2,
+.paper--edge-3,
+.paper--edge-4,
+.paper--edge-5,
+.paper--edge-6 {
+  margin-top: -86px !important;
+}
+
+.paper--edge-5 {
+  margin-top: -112px !important;
+}
+
+.paper--edge-6 {
+  margin-top: -96px !important;
+}
+
+/* Технический запас, чтобы overlap не обрезался контейнером. */
+.page {
+  overflow: visible !important;
+}
+
+@media (max-width: 767.98px) {
+  .paper--edge-2,
+  .paper--edge-3,
+  .paper--edge-4,
+  .paper--edge-5,
+  .paper--edge-6 {
+    margin-top: -56px !important;
+  }
+
+  .paper--edge-5 {
+    margin-top: -74px !important;
+  }
+
+  .paper--edge-6 {
+    margin-top: -62px !important;
+  }
+}
+
+/* =========================================================
+   V25 — ТОЧЕЧНАЯ ПОДГОНКА OVERLAP ПО КАЖДОЙ СЕКЦИИ
+   Пользовательский порядок слоёв:
+   Секция 1 = z-index 1
+   Секция 2 = z-index 2
+   Секция 3 = z-index 3
+   Секция 4 = z-index 4
+   Секция 5 = z-index 5
+   Секция 6 = z-index 6
+
+   Под каждую пару секций задан свой индивидуальный overlap,
+   чтобы рваные прозрачные края сходились аккуратнее.
+   ========================================================= */
+
+/* z-index строго по запросу пользователя */
+.paper--edge-1 {
+  z-index: 1 !important;
+}
+.paper--edge-2 {
+  z-index: 2 !important;
+}
+.paper--edge-3 {
+  z-index: 3 !important;
+}
+.paper--edge-4 {
+  z-index: 4 !important;
+}
+.paper--edge-5 {
+  z-index: 5 !important;
+}
+.paper--edge-6 {
+  z-index: 6 !important;
+}
+
+/* Индивидуальный overlap между секциями */
+.paper--edge-2 {
+  margin-top: -72px !important;
+}
+
+.paper--edge-3 {
+  margin-top: -54px !important;
+}
+
+.paper--edge-4 {
+  margin-top: -66px !important;
+}
+
+.paper--edge-5 {
+  margin-top: -118px !important;
+}
+
+.paper--edge-6 {
+  margin-top: -82px !important;
+}
+
+/* На мобильных уменьшаем величины пропорционально, но тоже поштучно */
+@media (max-width: 767.98px) {
+  .paper--edge-2 {
+    margin-top: -48px !important;
+  }
+
+  .paper--edge-3 {
+    margin-top: -38px !important;
+  }
+
+  .paper--edge-4 {
+    margin-top: -46px !important;
+  }
+
+  .paper--edge-5 {
+    margin-top: -78px !important;
+  }
+
+  .paper--edge-6 {
+    margin-top: -56px !important;
+  }
+}
+
+/* =========================================================
+   V26 — FULL WIDTH + БЕЗ СПЛЮЩИВАНИЯ ФОНОВ НА MOBILE
+
+   Раньше пользовательские изображения растягивались через
+   background-size: 100% 100%, поэтому на узких экранах
+   картинка деформировалась.
+
+   Теперь:
+   - каждая секция занимает всю ширину viewport;
+   - пропорции фоновых изображений сохраняются;
+   - фон заполняет секцию через cover;
+   - рваные края остаются частью самого изображения.
+   ========================================================= */
+
+.paper,
+.paper__sheet,
+.paper__base {
+  width: 100%;
+  max-width: none;
+}
+
+.paper {
+  width: 100vw;
+}
+
+.paper__sheet,
+.paper__base {
+  left: 0;
+  right: 0;
+}
+
+/* Сохраняем пропорции всех пользовательских изображений */
+.paper--edge-1 .paper__base,
+.paper--edge-2 .paper__base,
+.paper--edge-3 .paper__base,
+.paper--edge-4 .paper__base,
+.paper--edge-5 .paper__base,
+.paper--edge-6 .paper__base {
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+
+/* На мобильном отдельно фиксируем full-width геометрию */
+@media (max-width: 767.98px) {
+  .page,
+  .paper,
+  .paper__sheet,
+  .paper__base {
+    width: 100%;
+    max-width: none;
+  }
+
+  .paper {
+    width: 100vw;
+  }
+
+  .paper__sheet,
+  .paper__base {
+    left: 0;
+    right: 0;
+  }
+
+  .paper--edge-1 .paper__base,
+  .paper--edge-2 .paper__base,
+  .paper--edge-3 .paper__base,
+  .paper--edge-4 .paper__base,
+  .paper--edge-5 .paper__base,
+  .paper--edge-6 .paper__base {
+    background-size: cover !important;
+    background-position: center center !important;
   }
 }
