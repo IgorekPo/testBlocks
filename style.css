@@ -468,3 +468,49 @@ body {
     padding-bottom: 68px;
   }
 }
+
+
+/* =========================================================
+   V18 — MOBILE BACKGROUND STABILITY FIX ONLY
+
+   Ничего в секциях/анимации/JS не меняется.
+   На мобильных заменяем "background-attachment: fixed"
+   на отдельный стабильный слой с 100lvh, чтобы при скрытии/
+   появлении адресной строки фон не пересчитывал cover-размер.
+   ========================================================= */
+@media (max-width: 767.98px) {
+  body {
+    position: relative;
+    background: #071913;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    z-index: -3;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 100lvh;
+    pointer-events: none;
+
+    background:
+      linear-gradient(rgb(0 0 0 / .26), rgb(0 0 0 / .26)),
+      var(--debug-bg) center center / cover no-repeat;
+
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .paper__stage,
+  .paper.is-folding .paper__stage {
+    background: transparent;
+  }
+}
+
+@supports not (height: 100lvh) {
+  @media (max-width: 767.98px) {
+    body::after {
+      height: 100vh;
+    }
+  }
+}
