@@ -590,33 +590,19 @@ body {
 .paper--edge-3 .paper__base {
   background: url("assets/section-3-bg.webp") center center / cover no-repeat;
 }
-.paper--edge-3 .paper__content {
-  background: linear-gradient(to right, #fff 0%, #fff 60%, #000 60%, #000 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-}
 
 .paper--edge-4 .paper__base {
   background: url("assets/section-4-bg.webp") center center / cover no-repeat;
 }
-.paper--edge-4 .paper__base {
-  color: #fff;
-}
+
 .paper--edge-5 .paper__base {
   background: url("assets/section-5-bg.webp") center center / cover no-repeat;
 }
-.paper--edge-5 .paper__base {
-  color: #000;
-}
+
 .paper--edge-6 .paper__base {
   background: url("assets/section-6-bg.webp") center center / cover no-repeat;
 }
-.paper--edge-6 .paper__base {
-  color: #fff;
-}
+
 /* =========================================================
    V22 — БЕЗ CSS-МАСОК / БЕЗ ОТСТУПОВ МЕЖДУ СЕКЦИЯМИ
 
@@ -977,4 +963,101 @@ body::after,
     background-size: cover !important;
     background-position: center center !important;
   }
+}
+
+/* =========================================================
+   V27 — ЕДИНЫЙ ЗАДНИЙ ФОН ВСЕГО САЙТА
+   Фон вынесен в отдельный fixed-слой.
+   На мобильных НЕ используется background-attachment: fixed,
+   поэтому скрытие/появление адресной строки не пересчитывает
+   background-size: cover и не должно вызывать скачок масштаба.
+   ========================================================= */
+
+html,
+body {
+  background: #000 !important;
+}
+
+body {
+  position: relative;
+}
+
+.site-backdrop {
+  position: fixed;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background:
+    linear-gradient(rgb(0 0 0 / 0.05), rgb(0 0 0 / 0.05)),
+    url("assets/site-backdrop.jpg") center center / cover no-repeat;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+@supports (height: 100lvh) {
+  .site-backdrop {
+    height: 100lvh;
+  }
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+}
+
+body::before,
+body::after,
+.page::before {
+  display: none !important;
+}
+
+.paper__stage,
+.paper.is-folding .paper__stage {
+  background: transparent !important;
+}
+
+@media (max-width: 767.98px) {
+  .site-backdrop {
+    top: 0;
+    left: 0;
+    width: 100vw;
+    background-position: center center;
+    background-size: cover;
+  }
+}
+
+/* =========================================================
+   V28 — 1-Я СЕКЦИЯ: НИЖНИЙ КРАЙ СНОВА РВАНЫЙ
+   Для первой секции фиксируем привязку фона к низу,
+   чтобы нижний рваный край не обрезался и был виден.
+   ========================================================= */
+
+.paper--edge-1 .paper__base {
+  background-position: center bottom !important;
+}
+
+@media (max-width: 767.98px) {
+  .paper--edge-1 .paper__base {
+    background-position: center bottom !important;
+  }
+}
+
+.paper--edge-3 .paper__content {
+  background: linear-gradient(to right, #fff 0%, #fff 50%, #000 53%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.paper--edge-4 .paper__content {
+  color: #fff;
+}
+.paper--edge-5 .paper__content {
+  color: #000;
+}
+.paper--edge-6 .paper__content {
+  color: #fff;
 }
