@@ -3,92 +3,70 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#10140f" />
-
-    <title>Тест раскрывающихся папирусов</title>
-
+    <title>Перелистывание папируса</title>
     <link rel="stylesheet" href="./style.css" />
-    <script src="./script.js" defer></script>
   </head>
-
   <body>
-    <div class="site-backdrop" aria-hidden="true"></div>
-    <main class="papyrus-page">
-      <!-- СЕКЦИЯ 1 -->
-      <section class="papyrus papyrus--green-beige">
-        <div class="papyrus__sheet">
-          <div class="papyrus__content">
-            <h1>Первая секция</h1>
-            <p>Первая секция изначально полностью открыта.</p>
+    <main class="book">
+      <section class="page-stage" data-paper="./images/papyrus-beige.webp">
+        <div class="page-scene">
+          <div class="page__content">
+            <h1>Страница 1</h1>
+            <p>Содержимое первого блока.</p>
           </div>
         </div>
       </section>
 
-      <!-- СЕКЦИЯ 2 -->
-      <section class="papyrus papyrus--green-beige">
-        <div class="papyrus__sheet">
-          <div class="papyrus__content">
-            <h2>Вторая секция</h2>
-            <p>
-              Начинает раскрываться, когда примерно 25% её высоты входит в
-              область просмотра.
-            </p>
+      <section class="page-stage" data-paper="./images/papyrus-green-beige.webp">
+        <div class="page-scene">
+          <div class="page__content">
+            <h1>Страница 2</h1>
+            <p>Содержимое второго блока.</p>
           </div>
         </div>
-
-        <div class="tube" aria-hidden="true"></div>
       </section>
 
-      <!-- СЕКЦИЯ 3 -->
-      <section class="papyrus papyrus--green-beige">
-        <div class="papyrus__sheet">
-          <div class="papyrus__content">
-            <h2>Третья секция</h2>
-            <p>
-              Полностью раскрывается, когда центр секции совпадает с центром
-              экрана.
-            </p>
+      <section class="page-stage" data-paper="./images/papyrus-beige.webp">
+        <div class="page-scene">
+          <div class="page__content">
+            <h1>Страница 3</h1>
+            <p>Содержимое третьего блока.</p>
           </div>
         </div>
-
-        <div class="tube" aria-hidden="true"></div>
       </section>
 
-      <!-- СЕКЦИЯ 4 -->
-      <section class="papyrus papyrus--green-beige">
-        <div class="papyrus__sheet">
-          <div class="papyrus__content">
-            <h2>Четвёртая секция</h2>
-            <p>Фоны можно продолжать чередовать.</p>
+      <section class="page-stage" data-paper="./images/papyrus-green-beige.webp">
+        <div class="page-scene">
+          <div class="page__content">
+            <h1>Страница 4</h1>
+            <p>Содержимое четвёртого блока.</p>
           </div>
         </div>
-
-        <div class="tube" aria-hidden="true"></div>
       </section>
 
-      <!-- СЕКЦИЯ 5 -->
-      <section class="papyrus papyrus--green-beige">
-        <div class="papyrus__sheet">
-          <div class="papyrus__content">
-            <h2>Пятая секция</h2>
-            <p>При прокрутке вверх секция закрывается.</p>
+      <section class="page-stage" data-paper="./images/papyrus-beige.webp">
+        <div class="page-scene">
+          <div class="page__content">
+            <h1>Страница 5</h1>
+            <p>Содержимое пятого блока.</p>
           </div>
         </div>
-
-        <div class="tube" aria-hidden="true"></div>
       </section>
 
-      <!-- СЕКЦИЯ 6 -->
-      <section class="papyrus papyrus--beige">
-        <div class="papyrus__sheet">
-          <div class="papyrus__content">
-            <h2>Шестая секция</h2>
-            <p>Добавляй следующие секции по такому же принципу.</p>
+      <section class="page-stage" data-paper="./images/papyrus-green-beige.webp">
+        <div class="page-scene">
+          <div class="page__content">
+            <h1>Страница 6</h1>
+            <p>Содержимое шестого блока.</p>
           </div>
         </div>
-
-        <div class="tube" aria-hidden="true"></div>
       </section>
     </main>
+
+    <!-- Прозрачный слой для WebGL-листа. Он находится над содержимым страниц. -->
+    <canvas id="page-turn" aria-hidden="true"></canvas>
+
+    <!-- Three.js используется как ES-модуль: подключать script.js второй раз нельзя. -->
+    <script type="module" src="./script.js"></script>
   </body>
 </html>

@@ -1,251 +1,128 @@
-/* =====================================
-   RESET
-===================================== */
-
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
-html,
-body {
-  background-color: #07251e;
-}
+
 html {
+  width: 100%;
   min-width: 320px;
   scroll-behavior: auto;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Старый Edge */
 }
-html::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, новый Edge */
-}
+
 body {
-  margin: 0;
+  width: 100%;
   min-width: 320px;
-  color: #fff;
-  text-shadow: -15px 10px 15px #a1a0a0;
-  font-family: Georgia, "Times New Roman", serif;
-  position: relative;
+  margin: 0;
+  overflow-x: hidden;
+  background: #17120d;
 }
-.site-backdrop {
-  position: fixed;
-  z-index: 0;
+
+.book {
+  width: 100%;
+}
+
+/* Каждая секция занимает две высоты экрана:
+   первая высота — перелистывание, вторая — просмотр открытого блока. */
+.page-stage {
+  position: relative;
+  width: 100%;
+  height: 200vh;
+  height: 200svh;
+}
+.page-stage:first-child {
+  height: 100vh;
+  height: 100svh;
+}
+
+/* Сцена остаётся закреплённой, пока пользователь проходит её прокрутку. */
+.page-scene {
+  position: sticky;
   top: 0;
-  left: 0;
   width: 100%;
   height: 100vh;
-  height: 100dvh;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
 
-  background-image: url("./bg-steak.jpg");
-  background-repeat: no-repeat;
+  /* Папирус остаётся фоном самой секции. */
+  background-color: #17120d;
+  background-image: var(--paper-image);
   background-position: center;
-  background-size: cover;
-
-  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
-/* =====================================
-   PAPYRUS
-===================================== */
-
-.papyrus-page {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-}
-@supports (height: 100lvh) {
-  .site-backdrop {
-    height: 100lvh;
-  }
-}
-.papyrus {
-  --paper-overlap: 5.9svh;
-  position: relative;
-  z-index: 1;
-
-  width: 100%;
-
-  min-height: 100vh;
-  min-height: 100svh;
-  min-height: 100lvh;
-
-  margin: 0;
-
-  display: flex;
-  align-items: stretch;
-
-  overflow: visible;
-}
-
-/* Соединение рваных краёв */
-
-.papyrus + .papyrus {
-  margin-top: calc(-1 * var(--paper-overlap));
-}
-
-/* Лист папируса */
-
-.papyrus__sheet {
+/* Закрывающий лист для ещё неактивных секций. */
+.page-scene::after {
+  content: "";
   position: absolute;
   inset: 0;
+  z-index: 2;
+  pointer-events: none;
 
-  z-index: 1;
-
-  display: flex;
-  align-items: center;
-
-  background-repeat: no-repeat;
+  background-image: var(--paper-image);
   background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 
-  /* Важно: одинаковое масштабирование всех изображений */
-  background-size: auto 100%;
-
-  clip-path: inset(0 0 0 0);
-  -webkit-clip-path: inset(0 0 0 0);
+  opacity: 1;
+  transition: opacity 0.06s linear;
 }
 
-/* Фоны */
-
-.papyrus--beige .papyrus__sheet {
-  background-image: url("./papyrus-beige.webp");
-}
-
-.papyrus--green-beige .papyrus__sheet {
-  background-image: url("./papyrus-green-beige.webp");
-}
-
-/* Контент */
-
-.papyrus__content {
-  position: relative;
-  z-index: 1;
-
-  width: min(100% - 48px, 1100px);
-
-  margin-inline: auto;
-  padding-block: 110px;
-}
-
-.papyrus h1,
-.papyrus h2 {
-  margin: 0 0 20px;
-
-  font-size: clamp(36px, 6vw, 76px);
-  line-height: 1;
-}
-
-.papyrus__content p {
-  max-width: 620px;
-
-  font-size: clamp(16px, 2vw, 21px);
-  line-height: 1.55;
-}
-
-/* =====================================
-   GREEN TUBE
-===================================== */
-
-.tube {
-  --tube-width: 128px;
-
-  position: absolute;
-
-  z-index: 5;
-
-  top: -5%;
-  left: 0;
-
-  width: var(--tube-width);
-  height: 110%;
-
+/* Активная секция управляется перелистыванием Three.js. */
+.page-scene.is-active::after {
   opacity: 0;
-
-  pointer-events: none;
-
-  transform: translate3d(var(--tube-x, -150px), 0, 0) rotateY(-8deg);
-
-  transform-origin: center;
-
-  will-change: transform, opacity;
 }
-
-/* Корпус */
-
-.tube::before {
-  content: "";
-
+/* Главная страница всегда открыта при загрузке сайта. */
+.page-stage:first-child .page-scene::after {
+  opacity: 0;
+}
+/* Контент находится под WebGL-листом и открывается по мере перелистывания. */
+.page__content {
   position: absolute;
   inset: 0;
+  z-index: 1;
 
-  border-radius: 48% / 3%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
-  background:
-    linear-gradient(
-      90deg,
-      rgb(0 0 0 / 0.28) 0%,
-      rgb(255 255 255 / 0.08) 13%,
-      rgb(255 255 255 / 0.25) 32%,
-      rgb(255 255 255 / 0.08) 49%,
-      rgb(0 0 0 / 0.13) 72%,
-      rgb(0 0 0 / 0.3) 100%
-    ),
-    #efe4cf;
+  width: min(1200px, 90%);
+  margin-inline: auto;
+  padding: clamp(24px, 5vw, 80px);
 
-  box-shadow:
-    14px 0 28px rgb(0 0 0 / 0.18),
-    -18px 0 24px rgb(0 0 0 / 0.16),
-    inset 16px 0 20px rgb(255 255 255 / 0.07),
-    inset -18px 0 20px rgb(0 0 0 / 0.18);
+  color: #fff;
+  font-size: 120px;
+  text-shadow: -15px 15px 15px #686868;
+  text-align: center;
 }
 
-/* Боковая тень */
-
-.tube::after {
-  content: "";
-
-  position: absolute;
-
-  top: 1%;
-  bottom: 1%;
-  right: -28px;
-
-  width: 44px;
-
-  background: linear-gradient(90deg, rgb(0 0 0 / 0.2), transparent);
-
-  filter: blur(8px);
+.page__content h1 {
+  margin: 0 0 24px;
+  font-size: clamp(28px, 5vw, 64px);
 }
 
-/* =====================================
-   ADAPTIVE
-===================================== */
+.page__content p {
+  margin: 0;
+  font-size: clamp(16px, 2vw, 24px);
+}
 
-@media (max-width: 767.98px) {
-  .tube {
-    --tube-width: 92px;
-  }
+/* Three.js рисует только лист. Прозрачные области canvas показывают DOM под ним. */
+#page-turn {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 @media (max-width: 600px) {
-  .papyrus {
-    min-height: 85vh;
-    min-height: 85svh;
-  }
-
-  .papyrus__content {
-    width: calc(100% - 40px);
-    padding-block: 90px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tube {
-    display: none;
-  }
-}
-@media (max-width: 767px) {
-  .site-backdrop {
-    height: calc(100dvh + 100px);
+  .page__content {
+    width: 94%;
+    padding: 24px 16px;
   }
 }
