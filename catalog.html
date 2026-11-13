@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#17120d" />
+    <title>Каталог маринадов</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./catalog.css" />
+  </head>
+  <body>
+    <main class="book catalog-paper-book">
+      <!-- 1. Первый экран такой же, как на главной странице, и открыт сразу. -->
+      <section class="page-stage" data-paper="./images/papyrus-beige.webp">
+        <div class="page-scene">
+          <div class="page__content catalog-hero-content">
+            <h1>Страница 1</h1>
+            <p>Содержимое первого блока.</p>
+            <a class="catalog-back-link" href="./index.html" data-page-transition>← На главную</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Внешняя папирусная страница. Каталог открывается только после её переворота. -->
+      <section class="page-stage" data-paper="./images/papyrus-green-beige.webp">
+        <div class="page-scene">
+          <div class="page__content catalog-page-content">
+            <a class="catalog-back-link catalog-back-link--inside" href="./index.html" data-page-transition>← На главную</a>
+
+            <div class="catalog-layout" id="catalogLayout">
+              <button class="catalog-filter-trigger" id="catalogFilterTrigger" type="button" aria-expanded="false" aria-controls="catalogFilters">
+                <span aria-hidden="true">☷</span><span>Фильтр</span>
+              </button>
+              <button class="catalog-filter-backdrop" id="catalogFilterBackdrop" type="button" aria-label="Закрыть фильтр"></button>
+
+              <aside class="catalog-filters" id="catalogFilters" aria-label="Фильтры каталога">
+                <div class="catalog-filters__heading">
+                  <h2>Фильтры</h2>
+                  <button class="catalog-filter-close" id="catalogFilterClose" type="button" aria-label="Закрыть фильтр">×</button>
+                </div>
+                <fieldset class="catalog-filter-group">
+                  <legend>Цвет</legend>
+                  <label><input type="checkbox" name="color" value="green"><span class="filter-color filter-color--green"></span>Зелёный</label>
+                  <label><input type="checkbox" name="color" value="red"><span class="filter-color filter-color--red"></span>Красный</label>
+                  <label><input type="checkbox" name="color" value="yellow"><span class="filter-color filter-color--yellow"></span>Жёлтый</label>
+                </fieldset>
+                <fieldset class="catalog-filter-group">
+                  <legend>Вид мяса</legend>
+                  <label><input type="checkbox" name="meat" value="chicken">Курица</label>
+                  <label><input type="checkbox" name="meat" value="pork">Свинина</label>
+                  <label><input type="checkbox" name="meat" value="fish">Рыба</label>
+                </fieldset>
+                <button class="catalog-filter-reset" id="catalogFilterReset" type="button">Сбросить фильтры</button>
+              </aside>
+
+              <section class="catalog-products" aria-label="Каталог маринадов">
+                <header class="catalog-products__header">
+                  <div>
+                    <p class="catalog-eyebrow">ПОДБЕРИТЕ СВОЙ ВКУС</p>
+                    <h1>Каталог маринадов</h1>
+                  </div>
+                  <p class="catalog-products__count" id="catalogProductsCount">16 продуктов</p>
+                </header>
+
+                <div class="catalog-book" id="catalogBook" aria-label="Страницы каталога. Перетяните карточную страницу влево или вправо">
+                  <div class="catalog-book__underlay" id="catalogBookUnderlay"></div>
+                  <div class="catalog-book__leaf" id="catalogBookLeaf">
+                    <div class="catalog-book__face catalog-book__face--front" id="catalogBookFront"></div>
+                    <div class="catalog-book__face catalog-book__face--back" id="catalogBookBack"></div>
+                  </div>
+                  <div class="catalog-book__curl-host" id="catalogBookCurlHost" aria-hidden="true"></div>
+                  <p class="catalog-empty" id="catalogEmpty" hidden>По выбранным фильтрам ничего не найдено.</p>
+                </div>
+
+                <footer class="catalog-controls">
+                  <button class="catalog-arrow" id="catalogPrev" type="button" aria-label="Предыдущая страница" disabled>←</button>
+                  <span class="catalog-counter" id="catalogPageCounter">1 / 2</span>
+                  <button class="catalog-arrow" id="catalogNext" type="button" aria-label="Следующая страница">→</button>
+                </footer>
+                <p class="catalog-hint">Перетягивайте страницу или используйте стрелки. Вертикальная прокрутка откроет следующий лист.</p>
+              </section>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Пустая секция, как шестая секция главной страницы. -->
+      <section class="page-stage" data-paper="./images/papyrus-green-beige.webp">
+        <div class="page-scene">
+          <div class="page__content catalog-empty-section" aria-label="Пустая секция"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Тот же общий WebGL-лист, что и на testBlocks. -->
+    <canvas id="page-turn" aria-hidden="true"></canvas>
+    <div class="page-transition" aria-hidden="true"></div>
+
+    <!-- Внешняя книга использует исходный алгоритм без смешивания с кодом каталога. -->
+    <script type="module" src="./catalog-page-turn.js"></script>
+    <!-- html2canvas делает точный снимок HTML-карточек для текстуры 3D-листа. -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script type="module" src="./catalog-products.js"></script>
+    <script src="./page-transition.js" defer></script>
+  </body>
+</html>

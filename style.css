@@ -22,14 +22,19 @@ body {
   width: 100%;
 }
 
-/* Каждая секция занимает две высоты экрана:
-   первая высота — перелистывание, вторая — просмотр открытого блока. */
+/*
+  Для секций после первой оставлены две небольшие паузы:
+  12svh перед началом переворота и 12svh после полного открытия.
+  Само перелистывание по-прежнему занимает 100svh.
+*/
 .page-stage {
   position: relative;
   width: 100%;
-  height: 200vh;
-  height: 200svh;
+  height: 224vh;
+  height: 224svh;
 }
+
+/* Главный экран сразу открыт; дополнительные секции перелистываются как страницы. */
 .page-stage:first-child {
   height: 100vh;
   height: 100svh;
@@ -45,7 +50,7 @@ body {
   overflow: hidden;
   isolation: isolate;
 
-  /* Папирус остаётся фоном самой секции. */
+  /* Подложка каждого блока — сам папирус. */
   background-color: #17120d;
   background-image: var(--paper-image);
   background-position: center;
@@ -53,7 +58,12 @@ body {
   background-size: 100% 100%;
 }
 
-/* Закрывающий лист для ещё неактивных секций. */
+/*
+  Закрывающий лист для секций, которые ещё не стали активными.
+  Он не позволяет содержимому следующего блока выглядывать заранее.
+  Когда секция становится активной, этот слой убирается,
+  а его место занимает деформируемый лист на canvas.
+*/
 .page-scene::after {
   content: "";
   position: absolute;
@@ -70,15 +80,11 @@ body {
   transition: opacity 0.06s linear;
 }
 
-/* Активная секция управляется перелистыванием Three.js. */
 .page-scene.is-active::after {
   opacity: 0;
 }
-/* Главная страница всегда открыта при загрузке сайта. */
-.page-stage:first-child .page-scene::after {
-  opacity: 0;
-}
-/* Контент находится под WebGL-листом и открывается по мере перелистывания. */
+
+/* Контент находится под закрывающим листом и открывается при перелистывании. */
 .page__content {
   position: absolute;
   inset: 0;
@@ -93,9 +99,7 @@ body {
   margin-inline: auto;
   padding: clamp(24px, 5vw, 80px);
 
-  color: #fff;
-  font-size: 120px;
-  text-shadow: -15px 15px 15px #686868;
+  color: #302319;
   text-align: center;
 }
 
@@ -109,7 +113,7 @@ body {
   font-size: clamp(16px, 2vw, 24px);
 }
 
-/* Three.js рисует только лист. Прозрачные области canvas показывают DOM под ним. */
+/* Three.js рисует перелистываемый лист поверх всех DOM-секций. */
 #page-turn {
   position: fixed;
   inset: 0;
@@ -125,4 +129,51 @@ body {
     width: 94%;
     padding: 24px 16px;
   }
+}
+
+
+/* Кнопка каталога в третьей секции. */
+.catalog-open-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: clamp(26px, 4vh, 46px);
+  padding: 14px 32px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  color: inherit;
+  background: rgba(48, 35, 25, 0.08);
+  font: inherit;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+.catalog-open-button:hover {
+  color: #f3e6cd;
+  background: #302319;
+  transform: translateY(-2px);
+}
+
+/* Круговой переход между index.html и catalog.html. */
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  background-color: #e8d8bb;
+  background-image: url("https://raw.githubusercontent.com/IgorekPo/testBlocks/main/images/papyrus-beige.webp");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  clip-path: circle(0 at var(--transition-x, 50vw) var(--transition-y, 50vh));
+  transition: clip-path 680ms cubic-bezier(0.72, 0.02, 0.22, 1);
+}
+.page-transition.is-active {
+  clip-path: circle(150vmax at var(--transition-x, 50vw) var(--transition-y, 50vh));
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-transition { transition-duration: 1ms; }
 }

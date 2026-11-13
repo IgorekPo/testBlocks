@@ -6,21 +6,36 @@ const canvas = document.querySelector("#page-turn");
 if (!stages.length || !canvas) {
   throw new Error("Не найдены .page-stage или canvas#page-turn.");
 }
+
+// Передаём каждому DOM-блоку изображение его папирусного фона.
+// Эти фоновые листы закрывают содержимое секций, которые ещё не активны.
+const PAPYRUS_REMOTE_BASE =
+  "https://raw.githubusercontent.com/IgorekPo/testBlocks/main/images";
+
+function getRemotePaperPath(imagePath) {
+  const fileName = imagePath?.split(/[\\/]/).pop();
+  if (fileName === "papyrus-beige.webp" || fileName === "papyrus-green-beige.webp") {
+    return `${PAPYRUS_REMOTE_BASE}/${fileName}`;
+  }
+  return null;
+}
+
 const pageScenes = stages.map((stage, index) => {
   const pageScene = stage.querySelector(".page-scene");
   const imagePath = stage.dataset.paper;
 
   if (!pageScene || !imagePath) {
-    console.error(
-      `Секция ${index + 1}: не найдена .page-scene или data-paper.`,
-    );
+    console.error(`Секция ${index + 1}: не найдена .page-scene или data-paper.`);
     return null;
   }
 
-  pageScene.style.setProperty("--paper-image", `url("${imagePath}")`);
-
+  // Сразу задаём известный резервный URL. Если локальный WebP существует,
+  // loadTextures ниже заменит его локальным путём. Так на входе нет пустых фонов.
+  const initialPaperPath = getRemotePaperPath(imagePath) || imagePath;
+  pageScene.style.setProperty("--paper-image", `url("${initialPaperPath}")`);
   return pageScene;
 });
+
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 // Направление перелистывания: от нижнего левого угла преимущественно вправо,
@@ -28,7 +43,7 @@ const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const CURL_ANGLE = THREE.MathUtils.degToRad(16);
 const CURL_DIRECTION = new THREE.Vector2(
   Math.cos(CURL_ANGLE),
-  Math.sin(CURL_ANGLE),
+  Math.sin(CURL_ANGLE)
 );
 
 // Плотность сетки. Чем больше сегментов, тем плавнее изгиб,
@@ -40,6 +55,9 @@ const SEGMENTS_Y = 110;
 const CURL_WIDTH_FACTOR = 0.52;
 const CURL_DEPTH_FACTOR = 0.92;
 const TURN_HIDE_THRESHOLD = 0.997;
+// Небольшая пауза перед началом перелистывания каждой следующей страницы.
+// Вторая пауза (после полного открытия) задаётся свободной частью высоты секции.
+const TURN_START_DELAY = 0.12;
 
 let renderer;
 let scene;
@@ -87,12 +105,23 @@ function createScene() {
   scene = new THREE.Scene();
 
   const aspect = window.innerWidth / window.innerHeight;
-  camera = new THREE.OrthographicCamera(-aspect, aspect, 1, -1, 0.1, 50);
+  camera = new THREE.OrthographicCamera(
+    -aspect,
+    aspect,
+    1,
+    -1,
+    0.1,
+    50
+  );
   camera.position.set(0, 0, 10);
   camera.lookAt(0, 0, 0);
 
   // Мягкий общий свет и направленный источник подчёркивают форму изгиба.
-  const ambientLight = new THREE.HemisphereLight(0xfff0d5, 0x49311d, 1.25);
+  const ambientLight = new THREE.HemisphereLight(
+    0xfff0d5,
+    0x49311d,
+    1.25
+  );
   scene.add(ambientLight);
 
   const keyLight = new THREE.DirectionalLight(0xffe8c7, 2.1);
@@ -122,7 +151,7 @@ function createMaterials() {
       `#include <color_fragment>
       if (!gl_FrontFacing) {
         diffuseColor.rgb *= 0.78;
-      }`,
+      }`
     );
   };
 
@@ -154,7 +183,7 @@ function rebuildGeometry() {
     planeWidth,
     planeHeight,
     SEGMENTS_X,
-    SEGMENTS_Y,
+    SEGMENTS_Y
   );
   const nextShadowGeometry = nextGeometry.clone();
   const nextBasePositions = nextGeometry.attributes.position.array.slice();
@@ -207,8 +236,10 @@ function deformPage(progress) {
     const localY = originalY + planeHeight * 0.5;
 
     // s — положение вдоль движения сгиба, q — вдоль самой линии сгиба.
-    const s = localX * CURL_DIRECTION.x + localY * CURL_DIRECTION.y;
-    const q = -localX * CURL_DIRECTION.y + localY * CURL_DIRECTION.x;
+    const s =
+      localX * CURL_DIRECTION.x + localY * CURL_DIRECTION.y;
+    const q =
+      -localX * CURL_DIRECTION.y + localY * CURL_DIRECTION.x;
 
     const distanceBehindFold = foldPosition - s;
 
@@ -221,18 +252,21 @@ function deformPage(progress) {
 
       // Поворот точки вокруг движущейся диагональной линии сгиба.
       turnedS = foldPosition - distanceBehindFold * Math.cos(angle);
-
       // Основная выпуклость дуги + очень небольшой зазор между
       // уже перевёрнутой частью листа и ещё не перевёрнутой.
       // Этот зазор предотвращает z-fighting там, где лист накладывается сам на себя.
       lift =
-        distanceBehindFold * Math.sin(angle) * CURL_DEPTH_FACTOR +
+        distanceBehindFold *
+          Math.sin(angle) *
+          CURL_DEPTH_FACTOR +
         0.018 * smoothStep(t);
     }
 
     // Возвращаем координаты из базиса (s, q) в XY-плоскость.
-    const turnedXLocal = turnedS * CURL_DIRECTION.x - q * CURL_DIRECTION.y;
-    const turnedYLocal = turnedS * CURL_DIRECTION.y + q * CURL_DIRECTION.x;
+    const turnedXLocal =
+      turnedS * CURL_DIRECTION.x - q * CURL_DIRECTION.y;
+    const turnedYLocal =
+      turnedS * CURL_DIRECTION.y + q * CURL_DIRECTION.x;
 
     const turnedX = turnedXLocal - planeWidth * 0.5;
     const turnedY = turnedYLocal - planeHeight * 0.5;
@@ -285,7 +319,10 @@ function getActiveStage() {
     if (rect.top <= 0 && rect.bottom > 0) {
       return {
         index: i,
-        progress: clamp(-rect.top / window.innerHeight, 0, 1),
+        // Первые 12% высоты экрана — пауза. Это не даёт листу появляться
+        // сразу при входе в секцию. Увеличенная высота .page-stage оставляет
+        // такую же дополнительную паузу перед обратным закрытием.
+        progress: clamp((-rect.top / window.innerHeight) - TURN_START_DELAY, 0, 1),
       };
     }
   }
@@ -304,8 +341,8 @@ function renderCurrentFrame() {
 
   const { index, progress } = getActiveStage();
 
-  // Закрываем все неактивные секции.
-  // Только текущая секция передаётся под управление Three.js.
+  // Только активная секция отдаёт управление canvas.
+  // Все остальные остаются закрытыми собственным папирусным листом.
   pageScenes.forEach((pageScene, sceneIndex) => {
     if (pageScene) {
       pageScene.classList.toggle("is-active", sceneIndex === index);
@@ -360,6 +397,28 @@ function handleResize() {
   requestRender();
 }
 
+function canLoadImage(source) {
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => resolve(true);
+    image.onerror = () => resolve(false);
+    image.src = source;
+  });
+}
+
+async function resolvePaperPath(imagePath) {
+  // Сначала пробуем папку images в проекте пользователя.
+  if (await canLoadImage(imagePath)) return imagePath;
+
+  // Если локальных файлов нет, используем ровно те текстуры, которые
+  // применяются в работающем testBlocks.
+  const remotePath = getRemotePaperPath(imagePath);
+  if (remotePath && await canLoadImage(remotePath)) return remotePath;
+
+  return null;
+}
+
 async function loadTextures() {
   const loader = new THREE.TextureLoader();
   loader.setCrossOrigin("anonymous");
@@ -373,24 +432,33 @@ async function loadTextures() {
         return null;
       }
 
+      const resolvedPath = await resolvePaperPath(imagePath);
+      if (!resolvedPath) {
+        console.error(`Не удалось найти текстуру папируса: ${imagePath}`);
+        return null;
+      }
+
+      // Один и тот же разрешённый путь используется и CSS-фоном, и текстурой
+      // Three.js. Поэтому DOM-страница и перелистываемый лист совпадают.
+      pageScenes[index]?.style.setProperty("--paper-image", `url("${resolvedPath}")`);
+
       try {
-        const texture = await loader.loadAsync(imagePath);
+        const texture = await loader.loadAsync(resolvedPath);
         texture.colorSpace = THREE.SRGBColorSpace;
         texture.wrapS = THREE.ClampToEdgeWrapping;
         texture.wrapT = THREE.ClampToEdgeWrapping;
         texture.anisotropy = Math.min(
           renderer.capabilities.getMaxAnisotropy(),
-          8,
+          8
         );
         return texture;
       } catch (error) {
-        console.error(`Не удалось загрузить папирус: ${imagePath}`, error);
+        console.error(`Не удалось загрузить папирус: ${resolvedPath}`, error);
         return null;
       }
-    }),
+    })
   );
 }
-
 async function init() {
   if (!createRenderer()) return;
 
