@@ -3,119 +3,92 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Torn paper horizontal scroll demo</title>
-    <link rel="stylesheet" href="style.css" />
+    <meta name="theme-color" content="#10140f" />
+
+    <title>Тест раскрывающихся папирусов</title>
+
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
   </head>
+
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
-    <div class="scroll-hint">SCROLL <span>↓</span></div>
-
-    <main class="page">
-      <section class="paper paper--dark paper--edge-1 paper--first" data-paper>
-        <div class="paper__stage"></div>
-        <div class="paper__sheet">
-          <div class="paper__base">
-            <div class="paper__grain"></div>
-            <div class="paper__content">
-              <span class="paper__label">01 · ГОЛОВНА</span>
-              <h1>Преміальні маринади з Європи</h1>
-            </div>
+    <main class="papyrus-page">
+      <!-- СЕКЦИЯ 1 -->
+      <section class="papyrus papyrus--green-beige">
+        <div class="papyrus__sheet">
+          <div class="papyrus__content">
+            <h1>Первая секция</h1>
+            <p>Первая секция изначально полностью открыта.</p>
           </div>
         </div>
-        <div class="paper__roll" aria-hidden="true"></div>
       </section>
 
-      <section class="paper paper--cream paper--edge-2" data-paper>
-        <div class="paper__stage"></div>
-        <div class="paper__sheet">
-          <div class="paper__base">
-            <div class="paper__grain"></div>
-            <div class="paper__content">
-              <span class="paper__label">02 · НАША ІСТОРІЯ</span>
-              <h2>Історія про нас</h2>
-              <p>
-                Коротко про компанію, походження продукції, натуральні
-                інгредієнти та підхід до якості.
-              </p>
-            </div>
+      <!-- СЕКЦИЯ 2 -->
+      <section class="papyrus papyrus--green-beige">
+        <div class="papyrus__sheet">
+          <div class="papyrus__content">
+            <h2>Вторая секция</h2>
+            <p>
+              Начинает раскрываться, когда примерно 25% её высоты входит в
+              область просмотра.
+            </p>
           </div>
         </div>
-        <div class="paper__roll" aria-hidden="true"></div>
+
+        <div class="tube" aria-hidden="true"></div>
       </section>
 
-      <section class="paper paper--dark paper--edge-3" data-paper>
-        <div class="paper__stage"></div>
-        <div class="paper__sheet">
-          <div class="paper__base">
-            <div class="paper__grain"></div>
-            <div class="paper__content">
-              <span class="paper__label">03 · КАТАЛОГ МАРИНАДІВ</span>
-              <h2>Сухі та рідкі маринади</h2>
-              <p>
-                Основний каталог продукції: окремі напрями для сухих сумішей і
-                готових рідких маринадів.
-              </p>
-            </div>
+      <!-- СЕКЦИЯ 3 -->
+      <section class="papyrus papyrus--green-beige">
+        <div class="papyrus__sheet">
+          <div class="papyrus__content">
+            <h2>Третья секция</h2>
+            <p>
+              Полностью раскрывается, когда центр секции совпадает с центром
+              экрана.
+            </p>
           </div>
         </div>
-        <div class="paper__roll" aria-hidden="true"></div>
+
+        <div class="tube" aria-hidden="true"></div>
       </section>
 
-      <section class="paper paper--cream paper--edge-4" data-paper>
-        <div class="paper__stage"></div>
-        <div class="paper__sheet">
-          <div class="paper__base">
-            <div class="paper__grain"></div>
-            <div class="paper__content">
-              <span class="paper__label">04 · НАШІ ПЕРЕВАГИ</span>
-              <h2>Чому обирають EPOS</h2>
-              <p>
-                Натуральні інгредієнти, європейська якість, професійні рецептури
-                та рішення для дому й HoReCa.
-              </p>
-            </div>
+      <!-- СЕКЦИЯ 4 -->
+      <section class="papyrus papyrus--green-beige">
+        <div class="papyrus__sheet">
+          <div class="papyrus__content">
+            <h2>Четвёртая секция</h2>
+            <p>Фоны можно продолжать чередовать.</p>
           </div>
         </div>
-        <div class="paper__roll" aria-hidden="true"></div>
+
+        <div class="tube" aria-hidden="true"></div>
       </section>
 
-      <section class="paper paper--dark paper--edge-5" data-paper>
-        <div class="paper__stage"></div>
-        <div class="paper__sheet">
-          <div class="paper__base">
-            <div class="paper__grain"></div>
-            <div class="paper__content">
-              <span class="paper__label">05 · РЕЦЕПТИ ТА НАТХНЕННЯ</span>
-              <h2>Створюйте особливі страви</h2>
-              <p>
-                Добірка рецептів, ідей та способів використання маринадів для
-                м’яса, риби, овочів і гриля.
-              </p>
-            </div>
+      <!-- СЕКЦИЯ 5 -->
+      <section class="papyrus papyrus--green-beige">
+        <div class="papyrus__sheet">
+          <div class="papyrus__content">
+            <h2>Пятая секция</h2>
+            <p>При прокрутке вверх секция закрывается.</p>
           </div>
         </div>
-        <div class="paper__roll" aria-hidden="true"></div>
+
+        <div class="tube" aria-hidden="true"></div>
       </section>
 
-      <section class="paper paper--cream paper--edge-6 paper--last" data-paper>
-        <div class="paper__stage"></div>
-        <div class="paper__sheet">
-          <div class="paper__base">
-            <div class="paper__grain"></div>
-            <div class="paper__content">
-              <span class="paper__label">06 · ЧАСТІ ЗАПИТАННЯ ТА КОНТАКТИ</span>
-              <h2>Відповіді та зв’язок</h2>
-              <p>
-                Відповіді на популярні запитання про продукцію, доставку та
-                зберігання, а також контакти компанії.
-              </p>
-            </div>
+      <!-- СЕКЦИЯ 6 -->
+      <section class="papyrus papyrus--beige">
+        <div class="papyrus__sheet">
+          <div class="papyrus__content">
+            <h2>Шестая секция</h2>
+            <p>Добавляй следующие секции по такому же принципу.</p>
           </div>
         </div>
-        <div class="paper__roll" aria-hidden="true"></div>
+
+        <div class="tube" aria-hidden="true"></div>
       </section>
     </main>
-
-    <script src="script.js"></script>
   </body>
 </html>

@@ -1,209 +1,115 @@
-const papers = [...document.querySelectorAll("[data-paper]")];
+(() => {
+  const sections = [...document.querySelectorAll(".papyrus")];
 
-const clamp = (value, min = 0, max = 1) =>
-  Math.min(Math.max(value, min), max);
+  if (!sections.length) return;
 
-let ticking = false;
-let lastScrollY = window.scrollY;
-let scrollDirection = 1; // 1 = вниз, -1 = вверх
+  const clamp = (value, min = 0, max = 1) =>
+    Math.min(Math.max(value, min), max);
 
-function updatePapers() {
-  const vh = window.innerHeight;
-  const currentScrollY = window.scrollY;
-  const delta = currentScrollY - lastScrollY;
+  let ticking = false;
 
-  // Небольшой dead-zone, чтобы микродрожание браузера
-  // не переключало направление на каждом пикселе.
-  if (Math.abs(delta) > 1) {
-    scrollDirection = delta > 0 ? 1 : -1;
+  function update() {
+    const viewportHeight = document.documentElement.clientHeight;
+
+    sections.forEach((section, index) => {
+      const sheet = section.querySelector(".papyrus__sheet");
+      const tube = section.querySelector(".tube");
+
+      const rect = section.getBoundingClientRect();
+
+      // Первая секция всегда полностью открыта.
+      if (index === 0) {
+        sheet.style.clipPath = "inset(0 0 0 0)";
+        sheet.style.webkitClipPath = "inset(0 0 0 0)";
+        return;
+      }
+
+      if (!sheet) return;
+
+      const sectionHeight = rect.height;
+
+      if (sectionHeight <= 0 || viewportHeight <= 0) return;
+
+      // Начало раскрытия: в экран вошло 25% секции.
+      const startTop = viewportHeight - sectionHeight * 0.25;
+
+      // Конец раскрытия: центр секции совпал с центром экрана.
+      const finishTop = (viewportHeight - sectionHeight) / 2;
+
+      const distance = startTop - finishTop;
+
+      const progress =
+        distance === 0
+          ? rect.top <= finishTop
+            ? 1
+            : 0
+          : clamp((startTop - rect.top) / distance);
+
+      // =================================
+      // РАСКРЫТИЕ ПАПИРУСА
+      // =================================
+
+      const hiddenRight = (1 - progress) * 100;
+
+      const clip = `inset(0 ${hiddenRight}% 0 0)`;
+
+      sheet.style.clipPath = clip;
+      sheet.style.webkitClipPath = clip;
+
+      // =================================
+      // ДВИЖЕНИЕ ТУБУСА
+      // =================================
+
+      if (!tube) return;
+
+      const tubeWidth = tube.offsetWidth;
+
+      // Центр тубуса совпадает с границей раскрытия.
+      const tubeX = progress * rect.width - tubeWidth / 2;
+
+      tube.style.setProperty("--tube-x", `${tubeX}px`);
+
+      // Показываем тубус, пока папирус раскрывается.
+      const fadeIn = clamp(progress / 0.025);
+      const fadeOut = clamp((1 - progress) / 0.025);
+
+      tube.style.opacity = String(fadeIn * fadeOut);
+    });
+
+    ticking = false;
   }
 
-  papers.forEach((paper, index) => {
-    const rect = paper.getBoundingClientRect();
+  // =================================
+  // ОПТИМИЗАЦИЯ
+  // =================================
 
-    const visiblePx = Math.max(
-      0,
-      Math.min(rect.bottom, vh) - Math.max(rect.top, 0)
-    );
+  function requestUpdate() {
+    if (ticking) return;
 
-    const visible = clamp(
-      visiblePx / Math.min(rect.height, vh)
-    );
+    ticking = true;
 
-    let enter = 1;
-    let fold = 0;
-    let shown = 1;
+    requestAnimationFrame(update);
+  }
 
-    /* =====================================================
-       СКРОЛЛ ВНИЗ
-
-       Только раскрываем новую секцию слева -> направо.
-       Предыдущие секции НЕ сворачиваем вообще.
-       ===================================================== */
-    if (scrollDirection > 0) {
-      if (index !== 0 && rect.top > 0) {
-        const start = vh * 0.98;
-        const finish = vh * 0.20;
-
-        enter = clamp(
-          (start - rect.top) / (start - finish)
-        );
-      }
-
-      // Если секция уже дошла до верхней части окна,
-      // она считается полностью раскрытой.
-      if (rect.top <= vh * 0.20) {
-        enter = 1;
-      }
-
-      fold = 0;
-      shown = enter;
-    }
-
-    /* =====================================================
-       СКРОЛЛ ВВЕРХ
-
-       Ничего не "раскрываем заново".
-       Секция, из которой пользователь уходит вниз экрана,
-       начинает сворачиваться ТОЛЬКО когда её видимость
-       становится меньше 70%.
-
-       70% видимости -> fold = 0
-        0% видимости -> fold = 1
-       ===================================================== */
-    if (scrollDirection < 0) {
-      enter = 1;
-
-      const leavingThroughBottom =
-        rect.top > 0 &&
-        rect.top < vh &&
-        visible < 0.70;
-
-      if (leavingThroughBottom) {
-        fold = clamp(
-          (0.70 - visible) / 0.70
-        );
-      } else if (rect.top >= vh) {
-        // Секция уже полностью ушла вниз за экран.
-        fold = 1;
-      }
-
-      // Секции выше текущей остаются полностью раскрытыми.
-      if (rect.bottom <= 0 || rect.top <= 0) {
-        fold = 0;
-      }
-
-      shown = clamp(1 - fold);
-    }
-
-    /* =====================================================
-       СВЁРТОК
-
-       shown = 0  -> слева
-       shown = 1  -> справа
-
-       Поэтому:
-       вниз:  0 -> 1 = слева -> направо
-       вверх: 1 -> 0 = справа -> налево
-       ===================================================== */
-    const roll = paper.querySelector(".paper__roll");
-    const rollWidth = roll ? roll.offsetWidth : 128;
-    const rollOverlap = rollWidth * 0.70;
-
-    const rollX =
-      shown * rect.width - rollOverlap;
-
-    const entering =
-      scrollDirection > 0 &&
-      index !== 0 &&
-      rect.top > 0 &&
-      rect.top < vh &&
-      enter < 0.999 &&
-      visible > 0;
-
-    const folding =
-      scrollDirection < 0 &&
-      rect.top > 0 &&
-      rect.top < vh &&
-      visible > 0 &&
-      visible < 0.70 &&
-      fold > 0;
-
-    let rollOpacity = 0;
-
-    if (entering) {
-      // Появляется слева и исчезает,
-      // когда лист полностью раскрылся справа.
-      rollOpacity = clamp(
-        (1 - enter) / 0.10
-      );
-    }
-
-    if (folding) {
-      // При обратном скролле появляется справа
-      // и уходит влево вместе со сворачиваемым листом.
-      const appear = clamp(fold / 0.08);
-      const disappear = clamp(shown / 0.08);
-
-      rollOpacity = appear * disappear;
-    }
-
-    paper.style.setProperty(
-      "--enter",
-      enter.toFixed(4)
-    );
-
-    paper.style.setProperty(
-      "--fold",
-      fold.toFixed(4)
-    );
-
-    paper.style.setProperty(
-      "--shown",
-      shown.toFixed(4)
-    );
-
-    paper.style.setProperty(
-      "--roll-x",
-      `${rollX.toFixed(2)}px`
-    );
-
-    paper.style.setProperty(
-      "--roll-opacity",
-      rollOpacity.toFixed(4)
-    );
-
-    paper.classList.toggle(
-      "is-entering",
-      entering
-    );
-
-    paper.classList.toggle(
-      "is-folding",
-      folding
-    );
+  window.addEventListener("scroll", requestUpdate, {
+    passive: true,
   });
 
-  lastScrollY = currentScrollY;
-  ticking = false;
-}
+  window.addEventListener("resize", requestUpdate);
 
-function requestUpdate() {
-  if (ticking) return;
+  window.addEventListener("load", requestUpdate);
 
-  ticking = true;
-  requestAnimationFrame(updatePapers);
-}
+  window.addEventListener("pageshow", requestUpdate);
 
-updatePapers();
+  // Следим за изменением размеров секций.
+  if ("ResizeObserver" in window) {
+    const observer = new ResizeObserver(requestUpdate);
 
-window.addEventListener(
-  "scroll",
-  requestUpdate,
-  { passive: true }
-);
+    sections.forEach((section) => {
+      observer.observe(section);
+    });
+  }
 
-window.addEventListener(
-  "resize",
-  requestUpdate
-);
+  // Первоначальный расчёт.
+  update();
+})();
