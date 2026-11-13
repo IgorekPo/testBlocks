@@ -9,7 +9,7 @@
   let ticking = false;
 
   function update() {
-    const viewportHeight = document.documentElement.clientHeight;
+    const viewportHeight = window.innerHeight;
 
     sections.forEach((section, index) => {
       const sheet = section.querySelector(".papyrus__sheet");
