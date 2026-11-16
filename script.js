@@ -67,7 +67,7 @@ const fragmentShader = `
     }
 
     // Масштаб центрального изображения сохраняем: 3.0
-    return (uv - 0.5) * scaled * 3.0 + 0.5;
+    return (uv - 0.5) * scaled * 2.0 + 0.5;
   }
 
   void main() {
@@ -105,13 +105,33 @@ const fragmentShader = `
 
     vec2 displacement = vec2(waveA, waveB) * 0.006;
 
-    displacement += centered * ripple;
+// Сохраняем эффект круговой ряби.
+displacement += centered * ripple;
 
-    displacement +=
-      vec2(-uPointer.x, uPointer.y)
-      * influence
-      * 0.014
-      * uLayerMotion;
+// Направление от центра изображения к курсору.
+vec2 direction = normalize(
+  vec2(uPointer.x, uPointer.y) + vec2(0.0001)
+);
+
+// Насколько далеко курсор находится от центра.
+float pointerDistance = length(uPointer);
+
+// Сила растяжения.
+float stretch = smoothstep(0.0, 1.0, pointerDistance);
+
+// Вытягиваем изображение в сторону курсора.
+displacement -= direction
+  * influence
+  * stretch
+  * 0.15
+  * uLayerMotion;
+
+// Дополнительное локальное притяжение к курсору.
+displacement +=
+  vec2(-uPointer.x, uPointer.y)
+  * influence
+  * 0.025
+  * uLayerMotion;
 
     uv += displacement * uMotion;
 
@@ -322,7 +342,7 @@ function init() {
         // Нижний правый слой.
         addSideLayer("assets/right.webp", "right", {
           width: 0.42,
-          motion: 4.85,
+          motion: 0.85,
           phase: 1.1,
         });
 
