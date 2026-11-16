@@ -188,8 +188,8 @@ function resetPointer() {
 
 function onOrientation(event) {
   if (!sensorEnabled) return;
-  const gamma = THREE.MathUtils.clamp((event.gamma || 0) / 20, -1, 1);
-  const beta = THREE.MathUtils.clamp((event.beta || 0) / 25, -1, 1);
+  const gamma = THREE.MathUtils.clamp((event.gamma || 0) / 15, -1, 1);
+  const beta = THREE.MathUtils.clamp((event.beta || 0) / 15, -1, 1);
   targetPointer.set(gamma, beta);
 }
 
