@@ -53,7 +53,7 @@ const fragmentShader = `
       scaled.x = screenAspect / imageAspect;
     }
 
-    return (uv - 0.5) * scaled + 0.5;
+    return (uv - 0.5) * scaled * 3.0 + 0.5;
   }
 
   void main() {
