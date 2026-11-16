@@ -5,16 +5,22 @@ const canvas = document.querySelector("#liquidCanvas");
 const motionButton = document.querySelector("#motionButton");
 
 let renderer;
-let material;
-let texture;
 let frameId = 0;
 let sensorEnabled = false;
-let reducedMotion = window.matchMedia(
+
+let scene;
+let camera;
+
+const materials = [];
+const sideLayers = [];
+
+const reducedMotion = window.matchMedia(
   "(prefers-reduced-motion: reduce)",
 ).matches;
 
 const pointer = new THREE.Vector2(0, 0);
 const targetPointer = new THREE.Vector2(0, 0);
+
 // Инерция движения жидкости на телефоне
 const motionOffset = new THREE.Vector2(0, 0);
 const motionVelocity = new THREE.Vector2(0, 0);
@@ -22,10 +28,12 @@ const motionInput = new THREE.Vector2(0, 0);
 
 let lastGamma = null;
 let lastBeta = null;
+
 const clock = new THREE.Clock();
 
 const vertexShader = `
   varying vec2 vUv;
+
   void main() {
     vUv = uv;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
@@ -39,12 +47,17 @@ const fragmentShader = `
   uniform vec2 uResolution;
   uniform vec2 uImageResolution;
   uniform float uMotion;
+  uniform float uCover;
+  uniform float uLayerMotion;
+  uniform float uPhase;
+
   varying vec2 vUv;
 
-  // Аналог object-fit: cover: заполняем весь экран, не искажая изображение.
+  // Аналог object-fit: cover для центрального изображения.
   vec2 coverUv(vec2 uv) {
     float screenAspect = uResolution.x / uResolution.y;
     float imageAspect = uImageResolution.x / uImageResolution.y;
+
     vec2 scaled = vec2(1.0);
 
     if (screenAspect > imageAspect) {
@@ -53,36 +66,215 @@ const fragmentShader = `
       scaled.x = screenAspect / imageAspect;
     }
 
+    // Масштаб центрального изображения сохраняем: 3.0
     return (uv - 0.5) * scaled * 3.0 + 0.5;
   }
 
   void main() {
-    vec2 uv = coverUv(vUv);
+    // Центральный слой использует cover, боковые — обычные UV.
+    vec2 uv = mix(vUv, coverUv(vUv), uCover);
+
     vec2 centered = uv - 0.5;
 
-    float waveA = sin(uv.y * 8.0 + uTime * 0.42 + uPointer.x * 2.8);
-    float waveB = cos(uv.x * 7.0 - uTime * 0.34 + uPointer.y * 2.8);
-    float radius = length(uv - vec2(0.5 + uPointer.x * 0.16, 0.5 + uPointer.y * 0.16));
-    float ripple = sin(radius * 34.0 - uTime * 1.05) * 0.0022;
-    float influence = exp(-distance(uv, vec2(0.5 + uPointer.x * 0.2, 0.5 + uPointer.y * 0.2)) * 4.2);
+    float waveA = sin(
+      uv.y * 8.0 + uTime * 0.42 + uPointer.x * 2.8 + uPhase
+    );
+
+    float waveB = cos(
+      uv.x * 7.0 - uTime * 0.34 + uPointer.y * 2.8 + uPhase
+    );
+
+    float radius = length(
+      uv - vec2(
+        0.5 + uPointer.x * 0.16,
+        0.5 + uPointer.y * 0.16
+      )
+    );
+
+    float ripple = sin(radius * 34.0 - uTime * 1.05 + uPhase) * 0.0022;
+
+    float influence = exp(
+      -distance(
+        uv,
+        vec2(
+          0.5 + uPointer.x * 0.2,
+          0.5 + uPointer.y * 0.2
+        )
+      ) * 4.2
+    );
 
     vec2 displacement = vec2(waveA, waveB) * 0.006;
+
     displacement += centered * ripple;
-    displacement += vec2(-uPointer.x, uPointer.y) * influence * 0.014;
+
+    displacement +=
+      vec2(-uPointer.x, uPointer.y)
+      * influence
+      * 0.014
+      * uLayerMotion;
 
     uv += displacement * uMotion;
+
     vec4 color = texture2D(uTexture, uv);
+
     float light = 1.0 + influence * 0.12 * uMotion;
-    gl_FragColor = vec4(color.rgb * light * 1.15, color.a);
+
+    gl_FragColor = vec4(
+      color.rgb * light * 1.15,
+      color.a
+    );
   }
 `;
 
 function showFallback() {
   if (!canvas || !hero) return;
+
   canvas.style.display = "none";
+
   hero.style.backgroundImage = 'url("assets/golden-liquid.webp")';
   hero.style.backgroundSize = "contain";
   hero.style.backgroundPosition = "center";
+  hero.style.backgroundRepeat = "no-repeat";
+}
+
+function prepareTexture(texture) {
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.generateMipmaps = false;
+}
+
+function createMaterial(texture, settings = {}) {
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      uTexture: { value: texture },
+      uTime: { value: 0 },
+      uPointer: { value: pointer },
+
+      uResolution: {
+        value: new THREE.Vector2(hero.clientWidth, hero.clientHeight),
+      },
+
+      uImageResolution: {
+        value: new THREE.Vector2(texture.image.width, texture.image.height),
+      },
+
+      uMotion: {
+        value: reducedMotion ? 0 : 1,
+      },
+
+      uCover: {
+        value: settings.cover ? 1 : 0,
+      },
+
+      uLayerMotion: {
+        value: settings.motion ?? 1,
+      },
+
+      uPhase: {
+        value: settings.phase ?? 0,
+      },
+    },
+
+    vertexShader,
+    fragmentShader,
+
+    transparent: true,
+    depthWrite: false,
+  });
+
+  materials.push(material);
+
+  return material;
+}
+
+// Создаём центральный слой.
+function createMainLayer(texture) {
+  const material = createMaterial(texture, {
+    cover: true,
+    motion: 1,
+    phase: 0,
+  });
+
+  const geometry = new THREE.PlaneGeometry(2, 2);
+  const mesh = new THREE.Mesh(geometry, material);
+
+  mesh.renderOrder = 0;
+
+  scene.add(mesh);
+}
+
+// Рассчитываем размер и положение боковых изображений.
+function updateSideLayer(layer) {
+  const screenAspect = hero.clientWidth / hero.clientHeight;
+  const imageAspect = layer.texture.image.width / layer.texture.image.height;
+
+  // Ширина изображения относительно экрана.
+  let width = 2 * layer.width;
+
+  let height = (width * screenAspect) / imageAspect;
+
+  // Ограничиваем высоту, чтобы изображение не занимало весь экран.
+  const maxHeight = 1.05;
+
+  if (height > maxHeight) {
+    height = maxHeight;
+    width = (height * imageAspect) / screenAspect;
+  }
+
+  layer.mesh.scale.set(width / 2, height / 2, 1);
+
+  const offset = 0.035;
+
+  if (layer.position === "left") {
+    layer.mesh.position.x = -1 + width / 2 + offset;
+  } else {
+    layer.mesh.position.x = 1 - width / 2 - offset;
+  }
+
+  // Нижний край изображения находится рядом с нижним краем Hero.
+  layer.mesh.position.y = -1 + height / 2 + offset;
+}
+
+// Загружаем и добавляем боковое изображение.
+function addSideLayer(path, position, settings) {
+  const loader = new THREE.TextureLoader();
+
+  loader.load(
+    path,
+    (texture) => {
+      prepareTexture(texture);
+
+      const material = createMaterial(texture, {
+        cover: false,
+        motion: settings.motion,
+        phase: settings.phase,
+      });
+
+      const geometry = new THREE.PlaneGeometry(2, 2);
+      const mesh = new THREE.Mesh(geometry, material);
+
+      mesh.renderOrder = 1;
+
+      scene.add(mesh);
+
+      const layer = {
+        texture,
+        material,
+        mesh,
+        position,
+        width: settings.width,
+      };
+
+      sideLayers.push(layer);
+
+      updateSideLayer(layer);
+    },
+    undefined,
+    (error) => {
+      console.error(`Не удалось загрузить ${path}`, error);
+    },
+  );
 }
 
 function init() {
@@ -101,112 +293,129 @@ function init() {
 
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
     renderer.setSize(hero.clientWidth, hero.clientHeight, false);
+
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
+    scene = new THREE.Scene();
+
+    camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
     const loader = new THREE.TextureLoader();
+
     loader.load(
       "assets/golden-liquid.webp",
-      (loadedTexture) => {
-        texture = loadedTexture;
-        texture.colorSpace = THREE.SRGBColorSpace;
-        texture.minFilter = THREE.LinearFilter;
-        texture.magFilter = THREE.LinearFilter;
+      (texture) => {
+        prepareTexture(texture);
 
-        material = new THREE.ShaderMaterial({
-          uniforms: {
-            uTexture: { value: texture },
-            uTime: { value: 0 },
-            uPointer: { value: pointer },
-            uResolution: {
-              value: new THREE.Vector2(hero.clientWidth, hero.clientHeight),
-            },
-            uImageResolution: {
-              value: new THREE.Vector2(
-                texture.image.width,
-                texture.image.height,
-              ),
-            },
-            uMotion: { value: reducedMotion ? 0 : 1 },
-          },
-          vertexShader,
-          fragmentShader,
-          transparent: true,
-          depthWrite: false,
+        // Центральное изображение.
+        createMainLayer(texture);
+
+        // Нижний левый слой.
+        addSideLayer("assets/left.webp", "left", {
+          width: 0.22,
+          motion: 3.25,
+          phase: 1.4,
         });
 
-        const geometry = new THREE.PlaneGeometry(2, 2);
-        const plane = new THREE.Mesh(geometry, material);
-        const scene = new THREE.Scene();
-        scene.add(plane);
-        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-        animate(scene, camera);
+        // Нижний правый слой.
+        addSideLayer("assets/right.webp", "right", {
+          width: 0.42,
+          motion: 4.85,
+          phase: 1.1,
+        });
+
+        animate();
       },
       undefined,
       (error) => {
         console.error("Не удалось загрузить assets/golden-liquid.webp", error);
+
         showFallback();
       },
     );
   } catch (error) {
     console.warn("WebGL недоступен — используется статичный фон.", error);
+
     showFallback();
   }
 }
 
-function animate(scene, camera) {
+function animate() {
   cancelAnimationFrame(frameId);
+
   const render = () => {
     frameId = requestAnimationFrame(render);
+
     if (sensorEnabled) {
-      // Плавно передаём импульс от телефона жидкости
+      // Передаём импульс от телефона жидкости.
       motionVelocity.x += motionInput.x * 0.008;
       motionVelocity.y += motionInput.y * 0.008;
 
-      // Постепенно убираем входящий импульс
+      // Постепенно убираем входящий импульс.
       motionInput.multiplyScalar(0.85);
 
-      // Пружинная инерция
+      // Пружинная инерция.
       motionVelocity.x -= motionOffset.x * 0.018;
       motionVelocity.y -= motionOffset.y * 0.018;
 
-      // Плавное затухание
+      // Плавное затухание.
       motionVelocity.multiplyScalar(0.985);
 
-      // Движение жидкости
+      // Движение жидкости.
       motionOffset.add(motionVelocity);
 
       motionOffset.x = THREE.MathUtils.clamp(motionOffset.x, -1.5, 1.5);
+
       motionOffset.y = THREE.MathUtils.clamp(motionOffset.y, -1.5, 1.5);
 
-      // Плавно передаём движение шейдеру
       pointer.lerp(motionOffset, 0.08);
     } else {
       pointer.lerp(targetPointer, 0.045);
     }
-    material.uniforms.uTime.value = reducedMotion ? 0 : clock.getElapsedTime();
-    material.uniforms.uPointer.value.copy(pointer);
+
+    const time = reducedMotion ? 0 : clock.getElapsedTime();
+
+    // Обновляем все три слоя.
+    materials.forEach((material) => {
+      material.uniforms.uTime.value = time;
+      material.uniforms.uPointer.value.copy(pointer);
+    });
+
     renderer.render(scene, camera);
   };
+
   render();
 }
 
 function resize() {
-  if (!renderer || !hero || !material) return;
+  if (!renderer || !hero) return;
+
   const width = hero.clientWidth;
   const height = hero.clientHeight;
+
   renderer.setSize(width, height, false);
-  material.uniforms.uResolution.value.set(width, height);
+
+  materials.forEach((material) => {
+    material.uniforms.uResolution.value.set(width, height);
+  });
+
+  // Пересчитываем размеры боковых изображений.
+  sideLayers.forEach(updateSideLayer);
 }
 
 function onPointerMove(event) {
   if (!hero || sensorEnabled) return;
+
   const rect = hero.getBoundingClientRect();
+
   targetPointer.x = THREE.MathUtils.clamp(
     ((event.clientX - rect.left) / rect.width - 0.5) * 2,
     -1,
     1,
   );
+
   targetPointer.y = THREE.MathUtils.clamp(
     -((event.clientY - rect.top) / rect.height - 0.5) * 2,
     -1,
@@ -215,7 +424,9 @@ function onPointerMove(event) {
 }
 
 function resetPointer() {
-  if (!sensorEnabled) targetPointer.set(0, 0);
+  if (!sensorEnabled) {
+    targetPointer.set(0, 0);
+  }
 }
 
 function onOrientation(event) {
@@ -224,7 +435,6 @@ function onOrientation(event) {
   const gamma = event.gamma || 0;
   const beta = event.beta || 0;
 
-  // Запоминаем первое положение телефона
   if (lastGamma === null || lastBeta === null) {
     lastGamma = gamma;
     lastBeta = beta;
@@ -237,8 +447,8 @@ function onOrientation(event) {
   lastGamma = gamma;
   lastBeta = beta;
 
-  // Сглаживаем входящие данные датчика
   motionInput.x = THREE.MathUtils.clamp(deltaGamma, -3, 3);
+
   motionInput.y = THREE.MathUtils.clamp(deltaBeta, -3, 3);
 }
 
@@ -251,11 +461,13 @@ async function enableMotion() {
   try {
     if (typeof DeviceOrientationEvent.requestPermission === "function") {
       const permission = await DeviceOrientationEvent.requestPermission();
+
       if (permission !== "granted") {
         motionButton.textContent = "ДОЗВІЛ НЕ НАДАНО";
         return;
       }
     }
+
     sensorEnabled = true;
 
     lastGamma = null;
@@ -263,37 +475,29 @@ async function enableMotion() {
 
     window.addEventListener("deviceorientation", onOrientation, true);
 
-    // Скрываем кнопку после успешного включения
     motionButton.style.display = "none";
   } catch (error) {
     console.warn("Не вдалося отримати дозвіл на датчики руху.", error);
+
     motionButton.textContent = "НЕ ВДАЛОСЯ УВІМКНУТИ";
   }
 }
 
 hero?.addEventListener("pointermove", onPointerMove, { passive: true });
+
 hero?.addEventListener("pointerleave", resetPointer, { passive: true });
+
 motionButton?.addEventListener("click", enableMotion);
+
 window.addEventListener("resize", resize);
+
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     cancelAnimationFrame(frameId);
-  } else if (renderer && material) {
+  } else if (renderer && scene && camera) {
     clock.start();
-    const scene = material;
-    // Resume the existing render loop through the stored scene/camera below.
-    if (window.__heroLiquidScene && window.__heroLiquidCamera) {
-      animate(window.__heroLiquidScene, window.__heroLiquidCamera);
-    }
+    animate();
   }
 });
-
-// Keep scene references so animation can resume after the tab becomes visible.
-const originalAnimate = animate;
-animate = function (scene, camera) {
-  window.__heroLiquidScene = scene;
-  window.__heroLiquidCamera = camera;
-  originalAnimate(scene, camera);
-};
 
 init();
