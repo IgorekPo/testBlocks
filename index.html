@@ -1,89 +1,80 @@
 <!doctype html>
-<html lang="ru">
+<html lang="uk">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Премиальные маринады</title>
-    <link rel="stylesheet" href="./style.css" />
+    <meta name="theme-color" content="#17110b" />
+    <title>Marinade — Hero demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"
+        }
+      }
+    </script>
+    <script type="module" src="script.js"></script>
   </head>
   <body>
-    <main class="book">
-      <section class="page-stage" data-paper="./images/papyrus-beige.webp">
-        <div class="page-scene">
-          <div class="page__content">
-            <h1>Страница 1</h1>
-            <p>Содержимое первого блока.</p>
-          </div>
-        </div>
-      </section>
+    <main class="hero" id="top">
+      <!-- Full-section animated background -->
+      <canvas
+        class="hero__liquid"
+        id="liquidCanvas"
+        aria-hidden="true"
+      ></canvas>
+      <div class="hero__shade" aria-hidden="true"></div>
+      <div class="hero__noise" aria-hidden="true"></div>
 
-      <section
-        class="page-stage"
-        data-paper="./images/papyrus-green-beige.webp"
-      >
-        <div class="page-scene">
-          <div class="page__content">
-            <h1>Страница 2</h1>
-            <p>Содержимое второго блока.</p>
-          </div>
-        </div>
-      </section>
+      <header class="header">
+        <a class="brand" href="#top" aria-label="Marinade — на головну">
+          <span class="brand__mark">M.</span>
+          <span class="brand__name">MARINADE<span>LAB</span></span>
+        </a>
+        <span class="header__note">СМАК, СТВОРЕНИЙ ПРИРОДОЮ</span>
+        <a class="header__link" href="#discover">ДОСЛІДИТИ <span>↗</span></a>
+      </header>
 
-      <section class="page-stage" data-paper="./images/papyrus-beige.webp">
-        <div class="page-scene">
-          <div class="page__content">
-            <h1>Страница 3</h1>
-            <p>Содержимое третьего блока.</p>
-            <a
-              class="catalog-open-button"
-              href="./catalog.html"
-              data-page-transition
-              >Каталог</a
-            >
-          </div>
+      <section class="hero__stage" aria-label="Головний екран">
+        <div class="hero__copy">
+          <p class="eyebrow"><span></span> НОВА КУЛЬТУРА СМАКУ</p>
+          <h1>Смак,<br /><em>що оживає.</em></h1>
+          <p class="hero__description">
+            Натуральні маринади, що перетворюють звичайні інгредієнти на
+            особливу гастрономічну історію.
+          </p>
+          <a class="hero__button" href="#discover"
+            >ВІДКРИТИ КОЛЕКЦІЮ <span>↗</span></a
+          >
         </div>
-      </section>
 
-      <section
-        class="page-stage"
-        data-paper="./images/papyrus-green-beige.webp"
-      >
-        <div class="page-scene">
-          <div class="page__content">
-            <h1>Страница 4</h1>
-            <p>Содержимое четвёртого блока.</p>
-          </div>
+        <div class="hero__side-note">
+          НАТУРАЛЬНІ ІНГРЕДІЄНТИ <span>✳</span> ВИРАЗНИЙ СМАК
         </div>
-      </section>
 
-      <section class="page-stage" data-paper="./images/papyrus-beige.webp">
-        <div class="page-scene">
-          <div class="page__content">
-            <h1>Страница 5</h1>
-            <p>Содержимое пятого блока.</p>
-          </div>
-        </div>
-      </section>
-
-      <section
-        class="page-stage"
-        data-paper="./images/papyrus-green-beige.webp"
-      >
-        <div class="page-scene">
-          <div class="page__content">
-            <h1>Страница 6</h1>
-            <p>Содержимое шестого блока.</p>
-          </div>
+        <div class="hero__bottom">
+          <span>СТВОРЕНО ДЛЯ ТИХ, ХТО ВІДЧУВАЄ БІЛЬШЕ</span>
+          <button class="motion-button" id="motionButton" type="button">
+            УВІМКНУТИ РУХ <span>↗</span>
+          </button>
+          <span class="scroll-note">SCROLL TO EXPLORE <b>↓</b></span>
         </div>
       </section>
     </main>
 
-    <!-- Прозрачный слой для WebGL-листа. Он находится над содержимым страниц. -->
-    <canvas id="page-turn" aria-hidden="true"></canvas>
-    <div class="page-transition" aria-hidden="true"></div>
-
-    <!-- Three.js используется как ES-модуль: подключать script.js второй раз нельзя. -->
-    <script type="module" src="./script.js"></script>
-    <script src="./page-transition.js" defer></script>
+    <section class="discover" id="discover">
+      <p class="eyebrow"><span></span> ЗА МЕЖАМИ ЗВИЧНОГО</p>
+      <h2>Кожна крапля<br /><em>має характер.</em></h2>
+      <p>
+        Демонстраційний блок. Фонове зображення Hero реагує на рух курсора та
+        нахил пристрою.
+      </p>
+    </section>
   </body>
 </html>

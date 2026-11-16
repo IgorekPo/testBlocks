@@ -1,0 +1,7 @@
+Додайте сюди власні зображення з точними назвами:
+
+1) golden-liquid.webp
+2) ecofry-liquid.webp
+3) falling-spices.webp
+
+Інструкції — у README.md.
