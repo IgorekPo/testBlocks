@@ -370,3 +370,35 @@ h2 em {
     scroll-behavior: auto !important;
   }
 }
+
+@media (min-width: 769px) {
+  #motionButton {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  #motionButton {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+
+    padding: 18px 30px;
+    min-width: 220px;
+
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+
+    cursor: pointer;
+  }
+}
+
+@media (min-width: 769px) {
+  #motionButton {
+    display: none;
+  }
+}

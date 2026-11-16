@@ -15,6 +15,12 @@ let reducedMotion = window.matchMedia(
 
 const pointer = new THREE.Vector2(0, 0);
 const targetPointer = new THREE.Vector2(0, 0);
+// Инерция движения жидкости на телефоне
+const motionOffset = new THREE.Vector2(0, 0);
+const motionVelocity = new THREE.Vector2(0, 0);
+
+let lastGamma = null;
+let lastBeta = null;
 const clock = new THREE.Clock();
 
 const vertexShader = `
@@ -151,7 +157,25 @@ function animate(scene, camera) {
   cancelAnimationFrame(frameId);
   const render = () => {
     frameId = requestAnimationFrame(render);
-    pointer.lerp(targetPointer, 0.045);
+    if (sensorEnabled) {
+      // Пружинное возвращение жидкости
+      motionVelocity.x -= motionOffset.x * 0.025;
+      motionVelocity.y -= motionOffset.y * 0.025;
+
+      // Инерция и постепенное затухание
+      motionVelocity.multiplyScalar(0.965);
+
+      // Продолжаем движение даже после остановки телефона
+      motionOffset.add(motionVelocity);
+
+      // Ограничиваем амплитуду
+      motionOffset.x = THREE.MathUtils.clamp(motionOffset.x, -1.5, 1.5);
+      motionOffset.y = THREE.MathUtils.clamp(motionOffset.y, -1.5, 1.5);
+
+      pointer.copy(motionOffset);
+    } else {
+      pointer.lerp(targetPointer, 0.045);
+    }
     material.uniforms.uTime.value = reducedMotion ? 0 : clock.getElapsedTime();
     material.uniforms.uPointer.value.copy(pointer);
     renderer.render(scene, camera);
@@ -188,9 +212,39 @@ function resetPointer() {
 
 function onOrientation(event) {
   if (!sensorEnabled) return;
-  const gamma = THREE.MathUtils.clamp((event.gamma || 0) / 15, -1, 1);
-  const beta = THREE.MathUtils.clamp((event.beta || 0) / 15, -1, 1);
-  targetPointer.set(gamma, beta);
+
+  const gamma = event.gamma || 0;
+  const beta = event.beta || 0;
+
+  // Первое положение телефона запоминаем,
+  // но не создаём импульс
+  if (lastGamma === null || lastBeta === null) {
+    lastGamma = gamma;
+    lastBeta = beta;
+    return;
+  }
+
+  // Определяем, насколько изменился наклон
+  const deltaGamma = gamma - lastGamma;
+  const deltaBeta = beta - lastBeta;
+
+  lastGamma = gamma;
+  lastBeta = beta;
+
+  // Отсекаем слишком мелкие колебания датчика
+  const sensitivity = 0.7;
+
+  if (Math.abs(deltaGamma) < sensitivity && Math.abs(deltaBeta) < sensitivity) {
+    return;
+  }
+
+  // Добавляем жидкости импульс
+  motionVelocity.x += deltaGamma * 0.055;
+  motionVelocity.y += deltaBeta * 0.055;
+
+  // Ограничиваем максимальную скорость
+  motionVelocity.x = THREE.MathUtils.clamp(motionVelocity.x, -0.8, 0.8);
+  motionVelocity.y = THREE.MathUtils.clamp(motionVelocity.y, -0.8, 0.8);
 }
 
 async function enableMotion() {
@@ -208,8 +262,14 @@ async function enableMotion() {
       }
     }
     sensorEnabled = true;
+
+    lastGamma = null;
+    lastBeta = null;
+
     window.addEventListener("deviceorientation", onOrientation, true);
-    motionButton.innerHTML = "РУХ УВІМКНЕНО <span>✓</span>";
+
+    // Скрываем кнопку после успешного включения
+    motionButton.style.display = "none";
   } catch (error) {
     console.warn("Не вдалося отримати дозвіл на датчики руху.", error);
     motionButton.textContent = "НЕ ВДАЛОСЯ УВІМКНУТИ";
