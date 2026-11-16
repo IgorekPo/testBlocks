@@ -18,6 +18,7 @@ const targetPointer = new THREE.Vector2(0, 0);
 // Инерция движения жидкости на телефоне
 const motionOffset = new THREE.Vector2(0, 0);
 const motionVelocity = new THREE.Vector2(0, 0);
+const motionInput = new THREE.Vector2(0, 0);
 
 let lastGamma = null;
 let lastBeta = null;
@@ -158,21 +159,28 @@ function animate(scene, camera) {
   const render = () => {
     frameId = requestAnimationFrame(render);
     if (sensorEnabled) {
-      // Пружинное возвращение жидкости
-      motionVelocity.x -= motionOffset.x * 0.025;
-      motionVelocity.y -= motionOffset.y * 0.025;
+      // Плавно передаём импульс от телефона жидкости
+      motionVelocity.x += motionInput.x * 0.008;
+      motionVelocity.y += motionInput.y * 0.008;
 
-      // Инерция и постепенное затухание
-      motionVelocity.multiplyScalar(0.965);
+      // Постепенно убираем входящий импульс
+      motionInput.multiplyScalar(0.85);
 
-      // Продолжаем движение даже после остановки телефона
+      // Пружинная инерция
+      motionVelocity.x -= motionOffset.x * 0.018;
+      motionVelocity.y -= motionOffset.y * 0.018;
+
+      // Плавное затухание
+      motionVelocity.multiplyScalar(0.985);
+
+      // Движение жидкости
       motionOffset.add(motionVelocity);
 
-      // Ограничиваем амплитуду
       motionOffset.x = THREE.MathUtils.clamp(motionOffset.x, -1.5, 1.5);
       motionOffset.y = THREE.MathUtils.clamp(motionOffset.y, -1.5, 1.5);
 
-      pointer.copy(motionOffset);
+      // Плавно передаём движение шейдеру
+      pointer.lerp(motionOffset, 0.08);
     } else {
       pointer.lerp(targetPointer, 0.045);
     }
@@ -216,35 +224,22 @@ function onOrientation(event) {
   const gamma = event.gamma || 0;
   const beta = event.beta || 0;
 
-  // Первое положение телефона запоминаем,
-  // но не создаём импульс
+  // Запоминаем первое положение телефона
   if (lastGamma === null || lastBeta === null) {
     lastGamma = gamma;
     lastBeta = beta;
     return;
   }
 
-  // Определяем, насколько изменился наклон
   const deltaGamma = gamma - lastGamma;
   const deltaBeta = beta - lastBeta;
 
   lastGamma = gamma;
   lastBeta = beta;
 
-  // Отсекаем слишком мелкие колебания датчика
-  const sensitivity = 0.7;
-
-  if (Math.abs(deltaGamma) < sensitivity && Math.abs(deltaBeta) < sensitivity) {
-    return;
-  }
-
-  // Добавляем жидкости импульс
-  motionVelocity.x += deltaGamma * 0.055;
-  motionVelocity.y += deltaBeta * 0.055;
-
-  // Ограничиваем максимальную скорость
-  motionVelocity.x = THREE.MathUtils.clamp(motionVelocity.x, -0.8, 0.8);
-  motionVelocity.y = THREE.MathUtils.clamp(motionVelocity.y, -0.8, 0.8);
+  // Сглаживаем входящие данные датчика
+  motionInput.x = THREE.MathUtils.clamp(deltaGamma, -3, 3);
+  motionInput.y = THREE.MathUtils.clamp(deltaBeta, -3, 3);
 }
 
 async function enableMotion() {
